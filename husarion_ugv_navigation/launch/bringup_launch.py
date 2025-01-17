@@ -128,7 +128,7 @@ def generate_launch_description():
         source_file=params_file,
         replacements={
             "<namespace>/": namespace_ext,
-            "<observation_topic>": scan_topic,
+            "<observation_topic>": observation_topic,
             "<scan_topic>": scan_topic,
             "<is_laserscan>": is_laserscan,
             "<is_pointcloud>": is_pointcloud,
