@@ -91,9 +91,9 @@ def generate_launch_description():
         source_file=docking_server_config_path,
         replacements={
             "<robot_namespace>": namespace,
-            "//": "/",
+            "//": "",
             "<use_wibotic_info_param>": PythonExpression(
-                ["'false' if '", use_sim, "' else '", use_wibotic_info, "'"]
+                ["'false' if ", use_sim, " else '", use_wibotic_info, "'"]
             ),
         },
     )
@@ -171,6 +171,9 @@ def generate_launch_description():
         executable="wibotic_connector_can",
         namespace=namespace,
         emulate_tty=True,
+        parameters=[
+            {"max_service_call_retries": 20}
+        ],
         arguments=["--ros-args", "--log-level", log_level, "--log-level", "rcl:=INFO"],
         condition=IfCondition(PythonExpression(["not ", use_sim, " and ", use_wibotic_info])),
     )
