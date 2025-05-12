@@ -65,13 +65,13 @@ stop-visualization: check-husarion-webui
     sudo husarion-webui.stop
 
 # Dock Husarion UGV to the charging dock using navigation stack
-dock DOCK_NAME:
+dock DOCK_NAME="main":
     #!/bin/bash
     docker compose -f docker/compose.simulation.yaml exec docking bash -c \
      "source install/setup.bash && ros2 action send_goal /panther/dock_robot opennav_docking_msgs/action/DockRobot \" {  dock_type: charging_dock, navigate_to_staging_pose: true, dock_id: {{DOCK_NAME}} }\""
 
 # Dock Husarion UGV to the charging dock without using navigation stack
-dock-direct DOCK_NAME:
+dock-direct DOCK_NAME="main":
     #!/bin/bash
     docker compose -f docker/compose.simulation.yaml exec docking bash -c \
      "source install/setup.bash && ros2 action send_goal /panther/dock_robot opennav_docking_msgs/action/DockRobot \" {  dock_type: charging_dock, navigate_to_staging_pose: false, dock_id: {{DOCK_NAME}} }\""
