@@ -14,7 +14,7 @@ on:
           - stable
       target_distro:
         description: In case of "stable" release specify the ROS distro of the existing docker image (eg.
-          humble)
+          jazzy)
         type: string
         default: ardent
       target_release:
@@ -36,11 +36,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        ros-distro: [humble]     # iron is not supported on arm
+        ros-distro: [jazzy]     # iron is not supported on arm
 
     steps:
 
