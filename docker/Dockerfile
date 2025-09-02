@@ -15,8 +15,8 @@ RUN MYDISTRO=${PREFIX:-ros}; MYDISTRO=${MYDISTRO//-/} && \
     apt-get install -y \
         python3-pip \
         ros-dev-tools && \
-    pip3 install --break-system-packages moms_apriltag && \
-    vcs import src < src/husarion_ugv_autonomy_ros/husarion_ugv_autonomy/docking_deps.repos && \
+    pip3 install --break-system-packages --user moms_apriltag && \
+    vcs import src < src/husarion_ugv_autonomy_ros/husarion_ugv_autonomy/autonomy_deps.repos && \
     # Remove unnecessary packages
     find src/husarion_ugv_ros/ -maxdepth 1 -mindepth 1 \
         ! -name 'husarion_ugv_description' \

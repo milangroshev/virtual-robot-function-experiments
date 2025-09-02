@@ -1,11 +1,17 @@
 ---
-name: Run unit tests
+name: CI
 
 on:
   push:
   workflow_dispatch:
 
 jobs:
+  pre-commit:
+    name: Pre-commit
+    uses: ros-controls/ros2_control_ci/.github/workflows/reusable-pre-commit.yml@master
+    with:
+      ros_distro: jazzy
+
   build-and-test:
     name: Run unit tests
     runs-on: ubuntu-24.04
@@ -20,7 +26,7 @@ jobs:
       - name: Build and test
         uses: ros-tooling/action-ros-ci@v0.3
         with:
-          vcs-repo-file-url: ${{ github.workspace }}/husarion_ugv_autonomy/docking_deps.repos
+          vcs-repo-file-url: ${{ github.workspace }}/husarion_ugv_autonomy/autonomy_deps.repos
           target-ros2-distro: jazzy
           colcon-defaults: |
             {

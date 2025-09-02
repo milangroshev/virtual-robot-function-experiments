@@ -2,36 +2,39 @@ x-common-config:
   &common-config
   network_mode: host
   ipc: host
+  env_file: .env
 
 services:
   docking:
-    image: husarion/husarion-ugv-autonomy:jazzy-jazzy-devel
+    # image: husarion/husarion-ugv-autonomy:jazzy-jazzy-devel
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: docking
     <<: *common-config
     volumes:
       - ./config:/config
-    environment:
-      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - CYCLONE_DDS_URI=file:///config/cyclonedds.xml
+      - ../husarion_ugv_docking:/ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_docking
     command: >
       ros2 launch husarion_ugv_docking docking.launch.py
         namespace:=panther
         use_wibotic_info:=True
         camera_image_topic:=${CAMERA_IMAGE_TOPIC:-/panther/camera/color/image_raw}
         camera_info_topic:=${CAMERA_INFO_TOPIC:-/panther/camera/color/camera_info}
-        docking_server_config_path:=/config/docking_server.yaml
-        apriltag_config_path:=/config/apriltag.yaml
         apriltag_size:=0.08
         use_sim:=False
 
   navigation:
-    image: husarion/husarion-ugv-autonomy:jazzy-jazzy-devel
+    # image: husarion/husarion-ugv-autonomy:jazzy-jazzy-devel
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
     container_name: navigation
     <<: *common-config
     volumes:
+      - ./config:/config
       - ../maps:/maps
-    environment:
-      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ../husarion_ugv_navigation:/ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_navigation
     command: >
       ros2 launch husarion_ugv_navigation bringup_launch.py
         namespace:=panther
