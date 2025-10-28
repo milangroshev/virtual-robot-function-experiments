@@ -23,9 +23,11 @@ set(PACKAGE_DEPENDENCIES
     rclcpp_lifecycle
     sensor_msgs
     std_srvs
+    tf2
     tf2_geometry_msgs
     tf2_ros
-    wibotic_msgs)
+    wibotic_msgs
+    yaml-cpp)
 
 foreach(PACKAGE IN ITEMS ${PACKAGE_DEPENDENCIES})
   find_package(${PACKAGE} REQUIRED)
@@ -75,6 +77,11 @@ ament_target_dependencies(dock_pose_publisher ${PACKAGE_DEPENDENCIES})
 install(TARGETS dock_pose_publisher docking_manager_node
         DESTINATION lib/${PROJECT_NAME})
 
+add_executable(dock_database_updater src/dock_database_updater_main.cpp
+                                     src/dock_database_updater_node.cpp)
+ament_target_dependencies(dock_database_updater ${PACKAGE_DEPENDENCIES})
+target_link_libraries(dock_database_updater yaml-cpp)
+install(TARGETS dock_database_updater DESTINATION lib/${PROJECT_NAME})
 add_executable(send_to_dock_node src/send_to_dock_node_main.cpp
                                  src/send_to_dock_node.cpp)
 
@@ -135,6 +142,17 @@ if(BUILD_TESTING)
     PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
            $<INSTALL_INTERFACE:include>)
   ament_target_dependencies(${PROJECT_NAME}_test_tf2_utils
+                            ${PACKAGE_DEPENDENCIES})
+
+  ament_add_gtest(
+    ${PROJECT_NAME}_test_dock_database_updater
+    test/unit/test_dock_database_updater.cpp src/dock_database_updater_node.cpp)
+  target_link_libraries(${PROJECT_NAME}_test_dock_database_updater yaml-cpp)
+  target_include_directories(
+    ${PROJECT_NAME}_test_dock_database_updater
+    PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+           $<INSTALL_INTERFACE:include>)
+  ament_target_dependencies(${PROJECT_NAME}_test_dock_database_updater
                             ${PACKAGE_DEPENDENCIES})
 
   ament_add_gtest(
