@@ -68,6 +68,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Maximize build space
+        uses: easimon/maximize-build-space@master
+        with:
+          root-reserve-mb: 35000
+          remove-dotnet: 'true'
+          remove-android: 'true'
+          remove-haskell: 'true'
+          remove-codeql: 'true'
+
       - name: Build Docker Image
         uses: husarion-ci/ros-docker-img-action@v0.8
         with:

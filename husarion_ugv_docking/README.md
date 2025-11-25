@@ -10,11 +10,14 @@ The package contains a `ChargingDock` plugin for the [opennav_docking](https://g
 ## Configuration Files
 
 - [`husarion_ugv_docking_server.yaml`](./config/docking_server.yaml): Defines parameters for a `docking_server` and a `ChargingDock` plugin. Defines poses where charging docks are spawned in the Gazebo.
+- [`send_to_dock.yaml`](./config/send_to_dock.yaml): Defines parameters used by `send_to_dock_node` for docking action.
 
 ## ROS Nodes
 
 - `DockPosePublisherNode`: A lifecycle node listens to `tf` and republishes position of `dock_pose` in the fixed frame when it is activated.
 - `ChargingDock`:  A plugin for a Panther robot what is responsible for a charger service.
+- `DockDatabaseUpdater`: Listens to new poses for docking stations and reloads the database of `docking_server`.
+- `SendToDockNode`: A node which creates service server SetBool `send_robot_to_dock` and based on a request value sent (true/false) it either sends a robot to a dock or stops the docking action.
 
 ### DockPosePublisherNode
 
@@ -56,6 +59,42 @@ The package contains a `ChargingDock` plugin for the [opennav_docking](https://g
 - `<dock_name>.apriltag_id` [*int*, default: **0**]: AprilTag ID of a dock.
 - `<dock_name>.dock_frame` [*string*, default: **main_wibotic_transmitter_link**]: A frame id to compare with fixed frame if docked.
 - `<dock_name>.pose` [*list*, default: **[0.0, 0.0, 0.0]**]: A pose of a dock on the map. If the simulation is used a dock is spawned in this pose.
+
+### DockDatabaseUpdater
+
+#### Subscribers
+
+- `<dock_name>/new_dock_pose` [*geometry_msgs/PoseStamped*]: A new pose for a dock with name `dock_name`.
+
+#### Service clients
+
+- `docking_server/reload_database` [*nav2_msgs/ReloadDockDatabase]: A service from `docking_server` to reload a database from yaml file.
+
+#### Parameters
+
+- `docks` [*list of strings*, default: **["main"]**]: List of dock names to be managed.
+- `dock_database_filepath` [*string*, default: **"dock_database.yaml"**]: Path to the new YAML file containing dock database information.
+- `<dock_name>.type` [*string*, default: **charging_dock**]: Type of the dock with the given name.
+- `<dock_name>.pose` [*list of doubles*, default: **[0.0, 0.0, 0.0]**]: Pose of the dock with the given name.
+- `<dock_name>.frame` [*string*, default: **main_wibotic_transmitter_link**]: Frame ID associated with the dock.
+
+### SendToDockNode
+
+#### Service server
+
+- `send_robot_to_dock` [*std_srvs/SetBool*]: Receives requests for docking or stopping the docking action.
+  - If *std_srvs/SetBool: true* then the node sends request of docking with specified parameters to the action client.
+  - If *std_srvs/SetBool: false* then the node sends request of cancelling current docking action.
+
+#### Action client
+
+- `dock_robot` [*nav2_msgs/DockRobot*]: Docks robot or stops docking depending on the request sent by the service server `send_robot_to_dock`.
+
+#### Parameters
+
+- `dock_type` [*string*, default: "charging_dock"]: Type of the dock the robot navigates to.
+- `navigate_to_staging_pose` [*bool*, default: true]: Whether the robot has to use navigation stack to dock or not.
+- `dock_id` [*string*, default: "main"]: Name of the docking station.
 
 <!-- Override description
 ros2 launch panther_description overwrite_robot_description.launch.py controller_config_path:=$(pwd)/panther_ros/panther_description/config/components.yaml namespace:=panther
