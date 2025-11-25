@@ -70,8 +70,11 @@ public:
 private:
   rclcpp::executors::SingleThreadedExecutor::SharedPtr executor_;
   rclcpp::Node::SharedPtr node_;
+  rclcpp::CallbackGroup::SharedPtr callback_group_;
+  rclcpp::executors::SingleThreadedExecutor callback_group_executor_;
+  std::thread callback_group_executor_thread;
+
   rclcpp::Subscription<BoolMsg>::SharedPtr estop_sub_;
-  std::thread spin_thread_;
 
   bool estop_;
   std::string topic_;
