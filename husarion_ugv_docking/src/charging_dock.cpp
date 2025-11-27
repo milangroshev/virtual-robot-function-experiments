@@ -141,7 +141,7 @@ void ChargingDock::getParameters(
   node->get_parameter(name_ + ".wibotic_info_timeout", wibotic_info_timeout_);
 }
 
-// When there is no pose actual position of robot is a staging pose
+//  Provide the pre-docking staging pose given a dock’s location and frame
 ChargingDock::PoseStampedMsg
 ChargingDock::getStagingPose(const geometry_msgs::msg::Pose &pose,
                              const std::string &frame) {

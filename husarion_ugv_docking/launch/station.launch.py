@@ -41,8 +41,9 @@ def generate_apriltag_and_get_path(tag_id, apriltag_output_dir):
     return output_path
 
 
-def generate_urdf(name, apriltag_id, apriltag_size, apriltag_output_dir):
-    apriltag_image_path = generate_apriltag_and_get_path(apriltag_id, apriltag_output_dir)
+def generate_urdf(name, apriltag_id, apriltag_mount_height, apriltag_size, apriltag_output_dir):
+    root_link = f"{name}_apriltag_link"
+    apriltag_image = generate_apriltag_and_get_path(apriltag_id, apriltag_output_dir)
 
     station_description_content = Command(
         [
@@ -55,21 +56,29 @@ def generate_urdf(name, apriltag_id, apriltag_size, apriltag_output_dir):
                     "wibotic_station.urdf.xacro",
                 ]
             ),
-            " device_namespace:=",
-            name,
-            " apriltag_image_path:=",
-            apriltag_image_path,
+            " apriltag_image:=",
+            apriltag_image,
+            " apriltag_mount_height:=",
+            apriltag_mount_height,
             " apriltag_size:=",
             apriltag_size,
+            " component_name:=",
+            name,
+            " root_link:=",
+            root_link,
+            " transmitter_height:=",
+            "0.15",
         ]
     )
     return station_description_content
 
 
 def launch_stations_descriptions(context, *args, **kwargs):
-    apriltag_id = int(LaunchConfiguration("apriltag_id").perform(context))
+    apriltag_mount_height = LaunchConfiguration("apriltag_mount_height").perform(context)
+    apriltag_output_dir = LaunchConfiguration(
+        "apriltag_output_dir", default="/tmp/husarion_ugv_docking_apriltags"
+    ).perform(context)
     apriltag_size = LaunchConfiguration("apriltag_size").perform(context)
-    apriltag_output_dir = LaunchConfiguration("apriltag_output_dir").perform(context)
 
     docking_server_config_path = LaunchConfiguration("docking_server_config_path").perform(context)
     apriltag_size = LaunchConfiguration("apriltag_size").perform(context)
@@ -91,7 +100,7 @@ def launch_stations_descriptions(context, *args, **kwargs):
     for dock_name in docks_names:
         apriltag_id = ros_parameters[dock_name]["apriltag_id"]
         station_description_content = generate_urdf(
-            dock_name, apriltag_id, apriltag_size, apriltag_output_dir
+            dock_name, apriltag_id, apriltag_mount_height, apriltag_size, apriltag_output_dir
         )
         station_description = {
             "robot_description": ParameterValue(station_description_content, value_type=str)
@@ -114,10 +123,10 @@ def launch_stations_descriptions(context, *args, **kwargs):
 
 
 def generate_launch_description():
-    declare_apriltag_id = DeclareLaunchArgument(
-        "apriltag_id",
-        default_value="0",
-        description="ID of a generated apriltag on the station",
+    declare_apriltag_mount_height = DeclareLaunchArgument(
+        "apriltag_mount_height",
+        default_value="0.5",
+        description="Height above the ground of apriltag on the station",
     )
 
     declare_apriltag_size = DeclareLaunchArgument(
@@ -128,7 +137,7 @@ def generate_launch_description():
 
     return LaunchDescription(
         [
-            declare_apriltag_id,
+            declare_apriltag_mount_height,
             declare_apriltag_size,
             OpaqueFunction(function=launch_stations_descriptions),
         ]
