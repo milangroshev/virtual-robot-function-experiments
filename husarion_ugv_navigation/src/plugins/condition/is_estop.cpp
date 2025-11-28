@@ -27,20 +27,23 @@ IsEStop::IsEStop(const std::string &condition_name, const BT::NodeConfig &conf)
       topic_("hardware/e_stop") {
   getInput("topic", topic_);
   node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
-  estop_sub_ = node_->create_subscription<BoolMsg>(
-      topic_, rclcpp::QoS(rclcpp::KeepLast(1)).transient_local().reliable(),
-      std::bind(&IsEStop::eStopCb, this, std::placeholders::_1));
+  callback_group_ = node_->create_callback_group(
+      rclcpp::CallbackGroupType::MutuallyExclusive, false);
+  callback_group_executor_.add_callback_group(callback_group_,
+                                              node_->get_node_base_interface());
+  callback_group_executor_thread =
+      std::thread([this]() { callback_group_executor_.spin(); });
 
-  executor_ = std::make_shared<rclcpp::executors::SingleThreadedExecutor>();
-  executor_->add_node(node_);
-  spin_thread_ = std::thread([this]() { executor_->spin(); });
+  rclcpp::SubscriptionOptions sub_option;
+  sub_option.callback_group = callback_group_;
+  estop_sub_ = node_->create_subscription<std_msgs::msg::Bool>(
+      topic_, rclcpp::SystemDefaultsQoS(),
+      std::bind(&IsEStop::eStopCb, this, std::placeholders::_1), sub_option);
 }
 
 IsEStop::~IsEStop() {
-  executor_->cancel();
-  if (spin_thread_.joinable()) {
-    spin_thread_.join();
-  }
+  callback_group_executor_.cancel();
+  callback_group_executor_thread.join();
 }
 
 BT::NodeStatus IsEStop::tick() {
