@@ -1,0 +1,12 @@
+# The build context is the ROS packages and nothing else. Anything reachable from
+# the context is part of the COPY cache key, so a file the build never reads still
+# forces a full rebuild — including the __pycache__ and config/apriltags that the
+# running containers write back into the repo through the compose bind mounts.
+*
+!husarion_ugv_*
+
+**/__pycache__
+**/*.pyc
+**/apriltags
+**/*.md
+**/*.rst
