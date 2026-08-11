@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
-    <Domain Id="any">
-        <General>
-            <Interfaces>
-                <NetworkInterface name="eth0" />
-            </Interfaces>
-        </General>
+    <Domain>
+        <Discovery>
+            <!-- Increase max auto participant index from default (99) to 256.
+                 This controls the range of DDSI participant indices (and thus
+                 port numbers) that CycloneDDS will try when ParticipantIndex
+                 is "auto". With 2+ robots × ~30 DDS participants each across
+                 Gazebo + Nav2 containers, the default of 99 is exhausted.
+                 
+                 Error when too low:
+                   "Failed to find a free participant index for domain 0" -->
+            <MaxAutoParticipantIndex>256</MaxAutoParticipantIndex>
+        </Discovery>
     </Domain>
 </CycloneDDS>
