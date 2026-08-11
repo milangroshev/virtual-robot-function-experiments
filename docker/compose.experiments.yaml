@@ -1,0 +1,231 @@
+# =============================================================================
+# Decomposed Nav2 Stack for Resource Profiling
+# =============================================================================
+# The monolithic "navigation" service is split into 5 independent containers:
+#   1. sensor_preproc  — pointcloud filtering + conversion
+#   2. localization    — AMCL/map_server or SLAM toolbox
+#   3. planner         — planner_server (+ global costmap) + smoother
+#   4. controller      — controller_server (+ local costmap) + velocity_smoother
+#   5. bt_orchestrator — bt_navigator + behavior_server + waypoint_follower
+#
+# Each container:
+#   - Runs its own lifecycle manager (so it can autostart independently)
+#   - Has its own PID namespace → own cgroup → independently targetable by pqos
+#   - Uses use_composition=False (standalone processes, not composable plugins)
+#   - Shares DDS domain via host networking for inter-container ROS 2 comms
+#
+# VOLUME MOUNTING EXPLAINED:
+#   The image is built once from the Dockerfile. At build time, colcon compiles
+#   the workspace and `--symlink-install` creates symlinks in the install space:
+#
+#     /ros2_ws/install/.../launch/bringup_launch.py
+#       → /ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_navigation/launch/bringup_launch.py
+#
+#   At runtime, the volume mount OVERLAYS the source directory:
+#
+#     ../husarion_ugv_navigation  →  /ros2_ws/src/.../husarion_ugv_navigation
+#
+#   Because the install-space symlinks point INTO the source tree, the volume
+#   mount effectively hot-swaps the launch files. This means:
+#     ✅ Files that existed at build time: symlinks work, edits are live
+#     ✅ New files added AFTER rebuild: symlinks exist, edits are live
+#     ❌ New files added WITHOUT rebuild: no symlink → FindPackageShare can't find them
+#
+#   RULE: After adding new launch files to the host, run `docker compose up --build`
+#   ONCE to create the symlinks. After that, edits are live on container restart.
+#
+# All 5 nav2 services share the SAME image (same build block). Docker builds
+# it once and caches it — you don't get 5 separate builds.
+# =============================================================================
+
+x-common-config:
+  &common-config
+  env_file: .env
+
+# -- Shared build & runtime config for all Nav2 containers --
+x-nav2-common:
+  &nav2-common
+  <<: *common-config
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  environment:
+    - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+    - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
+  volumes:
+    - ./config:/config
+    - ../maps:/maps
+    - ../husarion_ugv_navigation:/ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_navigation
+  network_mode: "host"
+  ipc: host
+
+services:
+  # ===========================================================================
+  # 0. GAZEBO — Simulation
+  # ===========================================================================
+  gazebo:
+    image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
+    container_name: gazebo
+    <<: *common-config
+    runtime: ""
+    environment:
+      - DISPLAY
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./config:/config
+    network_mode: "host"
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.2
+        --field header.frame_id /${ROBOT_NAMESPACE:-panther}/odometry/filtered
+        | grep -q odom"
+      interval: 4s
+      timeout: 3s
+      retries: 4
+    command: >
+      ros2 launch husarion_ugv_gazebo simulation.launch.py
+        components_config_path:=/config/components.yaml
+        rviz_config:=/config/nav_config.rviz
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        robot_model:=${ROBOT_MODEL:-panther}
+
+  # ===========================================================================
+  # 1. SENSOR PREPROCESSING
+  # ===========================================================================
+  sensor_preproc:
+    <<: *nav2-common
+    container_name: ${ROBOT_NAMESPACE:-panther}_sensor_preproc
+    depends_on:
+      gazebo:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
+        --field header.frame_id /${ROBOT_NAMESPACE:-panther}/velodyne_points_filtered
+        | grep -q velodyne"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
+        observation_topic_type:=pointcloud
+        use_sim_time:=True
+        robot_model:=${ROBOT_MODEL:-panther}
+
+  # ===========================================================================
+  # 2. LOCALIZATION (AMCL + map_server  OR  SLAM Toolbox)
+  # ===========================================================================
+  localization:
+    <<: *nav2-common
+    container_name: ${ROBOT_NAMESPACE:-panther}_localization
+    depends_on:
+      sensor_preproc:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
+        --field id /${ROBOT_NAMESPACE:-panther}/bond
+        | grep -q map_saver"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_navigation localization_standalone_launch.py
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        slam:=${SLAM:-True}
+        use_sim_time:=True
+        robot_model:=${ROBOT_MODEL:-panther}
+        observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
+        observation_topic_type:=pointcloud
+
+  # ===========================================================================
+  # 3. PLANNER (planner_server + smoother_server)
+  # ===========================================================================
+  planner:
+    <<: *nav2-common
+    container_name: ${ROBOT_NAMESPACE:-panther}_planner
+    depends_on:
+      localization:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
+        --field id /${ROBOT_NAMESPACE:-panther}/bond
+        | grep -q planner_server"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_navigation planner_launch.py
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        use_sim_time:=True
+        robot_model:=${ROBOT_MODEL:-panther}
+        observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
+        observation_topic_type:=pointcloud
+
+  # ===========================================================================
+  # 4. CONTROLLER (controller_server + velocity_smoother)
+  # ===========================================================================
+  controller:
+    <<: *nav2-common
+    container_name: ${ROBOT_NAMESPACE:-panther}_controller
+    depends_on:
+      localization:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
+        --field id /${ROBOT_NAMESPACE:-panther}/bond
+        | grep -q velocity_smoother"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_navigation controller_launch.py
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        use_sim_time:=True
+        robot_model:=${ROBOT_MODEL:-panther}
+        observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
+        observation_topic_type:=pointcloud
+
+  # ===========================================================================
+  # 5. BT ORCHESTRATOR (bt_navigator + behavior_server + waypoint_follower)
+  # ===========================================================================
+  bt_orchestrator:
+    <<: *nav2-common
+    container_name: ${ROBOT_NAMESPACE:-panther}_bt_orchestrator
+    depends_on:
+      planner:
+        condition: service_healthy
+        restart: true
+      controller:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
+        --field id /${ROBOT_NAMESPACE:-panther}/bond
+        | grep -q bt_navigator"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        use_sim_time:=True
+        robot_model:=${ROBOT_MODEL:-panther}
+        observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
+        observation_topic_type:=pointcloud
