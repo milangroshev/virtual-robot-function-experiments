@@ -46,6 +46,7 @@ x-common-config:
 x-nav2-common:
   &nav2-common
   <<: *common-config
+  image: nav2-profiling:latest
   build:
     context: ..
     dockerfile: docker/Dockerfile

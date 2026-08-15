@@ -45,6 +45,7 @@ x-common-config:
 # -- Shared build & runtime config for all Nav2 containers --
 x-nav2-common:
   &nav2-common
+  image: nav2-profiling:latest
   <<: *common-config
   build:
     context: ..
