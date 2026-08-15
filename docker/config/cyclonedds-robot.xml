@@ -6,6 +6,7 @@
             <Interfaces>
                 <NetworkInterface name="enp4s0" />
             </Interfaces>
+            <AllowMulticast>false</AllowMulticast>
         </General>
         <Discovery>
             <!-- Increase max auto participant index from default (99) to 256.
