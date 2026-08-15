@@ -1,26 +1,17 @@
 # =============================================================================
-# Multi-Robot Decomposed Nav2 Stack (2 Robots)
+# Multi-Robot AMCL Nav2 Stack (2 Robots, Pre-built Map)
 # =============================================================================
-# Robot 1 (panther):  spawned by the gazebo container at (0, 0)
-# Robot 2 (panther2): spawned by gz_robot_2 container at (3, 2)
+# Uses AMCL localization with a saved map instead of SLAM.
+# Each robot has its own nav2_params file with pre-configured initial pose.
 #
-# Total containers: 12
-#   1  gazebo         — Gz Sim world + robot 1 (panther)
-#   1  gz_robot_2     — spawns robot 2 (panther2) into existing world
-#   5  Nav2 robot 1   — sensor_preproc, localization, planner, controller, bt_orchestrator
-#   5  Nav2 robot 2   — same 5 containers, namespace=panther2
-#
-# CRITICAL: gazebo and gz_robot_2 MUST share /tmp via a Docker volume.
-# The gz_ros2_control plugin runs INSIDE the Gazebo server process (gazebo
-# container), but the params files are created by the launch system in the
-# gz_robot_2 container. Without a shared /tmp, Gazebo can't open them.
+# Robot 1 (panther):  spawns at (0, 0), params: nav2_params_panther1.yaml
+# Robot 2 (panther2): spawns at (3.5, -3.5), params: nav2_params_panther2.yaml
 # =============================================================================
 
 x-common-config:
   &common-config
   env_file: .env
 
-# -- Shared build & runtime config for all Nav2 containers --
 x-nav2-common:
   &nav2-common
   <<: *common-config
@@ -77,7 +68,7 @@ services:
         robot_model:=${ROBOT_MODEL:-panther}
 
   # ===========================================================================
-  # 0b. ROBOT 2 SPAWNER — Adds panther2 into the running Gazebo world
+  # 0b. ROBOT 2 SPAWNER
   # ===========================================================================
   gz_robot_2:
     image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
@@ -120,10 +111,9 @@ services:
         yaw:=1.57
 
   # ===========================================================================
-  # ROBOT 1 NAV2 STACK (namespace = panther)
+  # ROBOT 1 NAV2 STACK (namespace = panther, AMCL mode)
   # ===========================================================================
 
-  # 1a. SENSOR PREPROCESSING — Robot 1
   sensor_preproc:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_sensor_preproc
@@ -148,7 +138,6 @@ services:
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
 
-  # 2a. LOCALIZATION — Robot 1
   localization:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_localization
@@ -170,12 +159,12 @@ services:
         namespace:=${ROBOT_NAMESPACE:-panther}
         slam:=False
         map:=/maps/my_map.yaml
+        params_file:=/config/nav2_params_panther1.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
         observation_topic_type:=pointcloud
 
-  # 3a. PLANNER — Robot 1
   planner:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_planner
@@ -195,12 +184,12 @@ services:
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
+        params_file:=/config/nav2_params_panther1.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
         observation_topic_type:=pointcloud
 
-  # 4a. CONTROLLER — Robot 1
   controller:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_controller
@@ -220,12 +209,12 @@ services:
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
+        params_file:=/config/nav2_params_panther1.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
         observation_topic_type:=pointcloud
 
-  # 5a. BT ORCHESTRATOR — Robot 1
   bt_orchestrator:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_bt_orchestrator
@@ -248,16 +237,17 @@ services:
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
+        params_file:=/config/nav2_params_panther1.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
         observation_topic_type:=pointcloud
 
   # ===========================================================================
-  # ROBOT 2 NAV2 STACK (namespace = panther2)
+  # ROBOT 2 NAV2 STACK (namespace = panther2, AMCL mode)
+  # Uses nav2_params_panther2.yaml with pre-configured initial pose
   # ===========================================================================
 
-  # 1b. SENSOR PREPROCESSING — Robot 2
   sensor_preproc_2:
     <<: *nav2-common
     container_name: panther2_sensor_preproc
@@ -282,7 +272,6 @@ services:
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
 
-  # 2b. LOCALIZATION — Robot 2
   localization_2:
     <<: *nav2-common
     container_name: panther2_localization
@@ -293,7 +282,7 @@ services:
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
-        --field id /${ROBOT_NAMESPACE:-panther}/bond
+        --field id /panther2/bond
         | grep -q amcl"
       interval: 4s
       timeout: 3s
@@ -304,12 +293,12 @@ services:
         namespace:=panther2
         slam:=False
         map:=/maps/my_map.yaml
+        params_file:=/config/nav2_params_panther2.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/panther2/velodyne_points
         observation_topic_type:=pointcloud
 
-  # 3b. PLANNER — Robot 2
   planner_2:
     <<: *nav2-common
     container_name: panther2_planner
@@ -329,12 +318,12 @@ services:
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=panther2
+        params_file:=/config/nav2_params_panther2.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/panther2/velodyne_points
         observation_topic_type:=pointcloud
 
-  # 4b. CONTROLLER — Robot 2
   controller_2:
     <<: *nav2-common
     container_name: panther2_controller
@@ -354,12 +343,12 @@ services:
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=panther2
+        params_file:=/config/nav2_params_panther2.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/panther2/velodyne_points
         observation_topic_type:=pointcloud
 
-  # 5b. BT ORCHESTRATOR — Robot 2
   bt_orchestrator_2:
     <<: *nav2-common
     container_name: panther2_bt_orchestrator
@@ -382,6 +371,7 @@ services:
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=panther2
+        params_file:=/config/nav2_params_panther2.yaml
         use_sim_time:=True
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/panther2/velodyne_points
