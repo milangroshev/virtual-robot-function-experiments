@@ -33,7 +33,7 @@ x-nav2-common:
   environment:
     - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
     - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
-    - CYCLONEDDS_URI=file:///config/cyclonedds.xml
+    - CYCLONEDDS_URI=file:///config/cyclonedds-edge.xml
   volumes:
     - ./config:/config
     - ../maps:/maps

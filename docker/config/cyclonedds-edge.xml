@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<CycloneDDS xmlns="https://cdds.io/config" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd">
+    <Domain>
+        <General>
+            <!-- Bind to all interfaces so DDS traffic flows on any NIC -->
+            <Interfaces>
+                <NetworkInterface name="enp87s0" />
+            </Interfaces>
+        </General>
+        <Discovery>
+            <!-- Increase max auto participant index from default (99) to 256.
+                 With 2+ robots × ~30 DDS participants each across
+                 Gazebo + Nav2 containers, the default of 99 is exhausted. -->
+            <MaxAutoParticipantIndex>256</MaxAutoParticipantIndex>
+            <!-- Explicit peer list for cross-host discovery.
+                 Both hosts list each other so DDS can discover nodes
+                 even if multicast is blocked on the network. -->
+            <Peers>
+                <Peer address="10.205.10.16" />
+                <Peer address="10.205.1.85" />
+            </Peers>
+            <!-- Also keep multicast as fallback for same-host discovery -->
+            <ParticipantIndex>auto</ParticipantIndex>
+        </Discovery>
+    </Domain>
+</CycloneDDS>
