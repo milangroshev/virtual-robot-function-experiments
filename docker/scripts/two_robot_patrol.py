@@ -17,6 +17,7 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
 from rclpy.parameter import Parameter
+from rclpy.executors import SingleThreadedExecutor
 from nav2_msgs.action import NavigateToPose
 from std_srvs.srv import Trigger
 import time
@@ -75,7 +76,12 @@ STATUS_ABORTED = 6
 
 
 class PatrolNode(Node):
-    """ROS 2 node that patrols through waypoints using Nav2."""
+    """ROS 2 node that patrols through waypoints using Nav2.
+    
+    Each instance gets its own SingleThreadedExecutor running in a
+    dedicated background thread, so multiple PatrolNodes can run
+    concurrently without 'Executor is already spinning' errors.
+    """
 
     def __init__(self, namespace, node_name):
         super().__init__(
@@ -95,6 +101,12 @@ class PatrolNode(Node):
         estop_service_name = f'/{namespace}/hardware/e_stop_reset'
         self._estop_client = self.create_client(Trigger, estop_service_name)
 
+        # --- Executor setup ---
+        # Each node gets its own executor to avoid threading conflicts
+        self._executor = SingleThreadedExecutor()
+        self._executor.add_node(self)
+        self._spin_thread = None
+
         # Stats
         self.total_goals = 0
         self.total_successes = 0
@@ -105,6 +117,33 @@ class PatrolNode(Node):
         self.get_logger().info(f'  Action server: {action_name}')
         self.get_logger().info(f'  E-stop service: {estop_service_name}')
 
+    def start_executor(self):
+        """Start the executor spin thread."""
+        self._spin_thread = threading.Thread(
+            target=self._spin_executor, daemon=True
+        )
+        self._spin_thread.start()
+
+    def _spin_executor(self):
+        """Background thread that spins the executor."""
+        try:
+            while not self.shutdown_requested:
+                self._executor.spin_once(timeout_sec=0.1)
+        except Exception:
+            pass
+
+    def _wait_for_future(self, future, timeout_sec=300.0):
+        """Wait for a future to complete by polling (thread-safe)."""
+        start = time.time()
+        while not future.done():
+            if self.shutdown_requested:
+                return False
+            if time.time() - start > timeout_sec:
+                self.get_logger().error('Future timed out')
+                return False
+            time.sleep(0.1)
+        return True
+
     def wait_for_clock(self, timeout_sec=120.0):
         """Wait until /clock is publishing (sim time is flowing)."""
         self.get_logger().info('Waiting for /clock (sim time)...')
@@ -112,7 +151,7 @@ class PatrolNode(Node):
         while time.time() - start < timeout_sec:
             if self.shutdown_requested:
                 return False
-            rclpy.spin_once(self, timeout_sec=0.5)
+            time.sleep(0.5)
             now = self.get_clock().now()
             if now.nanoseconds > 0:
                 self.get_logger().info(
@@ -157,7 +196,13 @@ class PatrolNode(Node):
 
             request = Trigger.Request()
             future = self._estop_client.call_async(request)
-            rclpy.spin_until_future_complete(self, future, timeout_sec=5.0)
+
+            if not self._wait_for_future(future, timeout_sec=5.0):
+                self.get_logger().warning(
+                    f'E-stop service call timed out '
+                    f'(attempt {attempt + 1}/{max_retries})'
+                )
+                continue
 
             if future.result() is not None:
                 result = future.result()
@@ -173,7 +218,7 @@ class PatrolNode(Node):
                     return True
             else:
                 self.get_logger().warning(
-                    f'E-stop service call timed out '
+                    f'E-stop service call returned None '
                     f'(attempt {attempt + 1}/{max_retries})'
                 )
 
@@ -208,16 +253,24 @@ class PatrolNode(Node):
 
         goal_start = time.time()
 
+        # Send goal async
         send_future = self._action_client.send_goal_async(goal_msg)
-        rclpy.spin_until_future_complete(self, send_future)
+        if not self._wait_for_future(send_future, timeout_sec=10.0):
+            self.get_logger().error(f'Timeout sending goal to {waypoint_name}')
+            return False, 0.0
 
         goal_handle = send_future.result()
         if not goal_handle.accepted:
             self.get_logger().error(f'Goal to {waypoint_name} REJECTED')
             return False, 0.0
 
+        # Wait for result
         result_future = goal_handle.get_result_async()
-        rclpy.spin_until_future_complete(self, result_future)
+        if not self._wait_for_future(result_future, timeout_sec=300.0):
+            self.get_logger().error(
+                f'Timeout waiting for {waypoint_name} result'
+            )
+            return False, time.time() - goal_start
 
         duration = time.time() - goal_start
         result = result_future.result()
@@ -244,58 +297,68 @@ class PatrolNode(Node):
             )
             return False, duration
 
-
-def run_patrol(node, patrol_order, num_loops):
-    """Run the patrol loop for a single robot. Called in a thread."""
-    try:
-        while not node.shutdown_requested:
-            node.loop_count += 1
-            if num_loops > 0 and node.loop_count > num_loops:
-                break
-
-            node.get_logger().info(
-                f'═══ [{node.namespace}] Loop {node.loop_count} '
-                f'{"of " + str(num_loops) if num_loops > 0 else "(∞)"} ═══'
-            )
-            loop_start = time.time()
-
-            for waypoint_name in patrol_order:
-                if node.shutdown_requested:
+    def run_patrol(self, patrol_order, num_loops):
+        """Run the patrol loop for this robot."""
+        try:
+            while not self.shutdown_requested:
+                self.loop_count += 1
+                if num_loops > 0 and self.loop_count > num_loops:
                     break
 
-                node.total_goals += 1
-                success, duration = node.send_goal(waypoint_name)
+                self.get_logger().info(
+                    f'═══ [{self.namespace}] Loop {self.loop_count} '
+                    f'{"of " + str(num_loops) if num_loops > 0 else "(∞)"} ═══'
+                )
+                loop_start = time.time()
 
-                if success:
-                    node.total_successes += 1
-                else:
-                    node.total_failures += 1
-                    # Retry once on failure
-                    node.get_logger().info(f'Retrying {waypoint_name}...')
-                    node.total_goals += 1
-                    success, duration = node.send_goal(waypoint_name)
+                for waypoint_name in patrol_order:
+                    if self.shutdown_requested:
+                        break
+
+                    self.total_goals += 1
+                    success, duration = self.send_goal(waypoint_name)
+
                     if success:
-                        node.total_successes += 1
+                        self.total_successes += 1
                     else:
-                        node.total_failures += 1
-                        node.get_logger().warning(
-                            f'Skipping {waypoint_name} after retry failure'
+                        self.total_failures += 1
+                        # Retry once
+                        self.get_logger().info(
+                            f'Retrying {waypoint_name}...'
                         )
+                        self.total_goals += 1
+                        success, duration = self.send_goal(waypoint_name)
+                        if success:
+                            self.total_successes += 1
+                        else:
+                            self.total_failures += 1
+                            self.get_logger().warning(
+                                f'Skipping {waypoint_name} after retry'
+                            )
 
-            loop_duration = time.time() - loop_start
-            success_rate = (
-                node.total_successes / node.total_goals * 100
-                if node.total_goals > 0 else 0
-            )
-            node.get_logger().info(
-                f'[{node.namespace}] Loop {node.loop_count} done in '
-                f'{loop_duration:.1f}s | '
-                f'Success: {node.total_successes}/{node.total_goals} '
-                f'({success_rate:.0f}%)'
+                loop_duration = time.time() - loop_start
+                rate = (
+                    self.total_successes / self.total_goals * 100
+                    if self.total_goals > 0 else 0
+                )
+                self.get_logger().info(
+                    f'[{self.namespace}] Loop {self.loop_count} done '
+                    f'in {loop_duration:.1f}s | '
+                    f'Success: {self.total_successes}/{self.total_goals} '
+                    f'({rate:.0f}%)'
+                )
+
+        except Exception as e:
+            self.get_logger().error(
+                f'[{self.namespace}] Exception: {e}'
             )
 
-    except Exception as e:
-        node.get_logger().error(f'[{node.namespace}] Exception: {e}')
+    def cleanup(self):
+        """Stop executor and clean up."""
+        self.shutdown_requested = True
+        if self._spin_thread and self._spin_thread.is_alive():
+            self._spin_thread.join(timeout=2.0)
+        self._executor.shutdown()
 
 
 def main():
@@ -305,116 +368,133 @@ def main():
 
     rclpy.init()
 
-    # Create patrol nodes for both robots
-    node1 = PatrolNode('panther', 'patrol_panther')
-    node2 = PatrolNode('panther2', 'patrol_panther2')
+    # Create both robot nodes with unique names
+    robot1 = PatrolNode('panther', 'patrol_panther')
+    robot2 = PatrolNode('panther2', 'patrol_panther2')
 
-    # Handle Ctrl+C gracefully
+    shutdown_event = threading.Event()
+
+    # Handle Ctrl+C
     def signal_handler(sig, frame):
-        node1.get_logger().info('Shutdown requested for all robots...')
-        node1.shutdown_requested = True
-        node2.shutdown_requested = True
+        robot1.get_logger().info('Shutdown requested for all robots...')
+        robot1.shutdown_requested = True
+        robot2.shutdown_requested = True
+        shutdown_event.set()
 
     signal.signal(signal.SIGINT, signal_handler)
     signal.signal(signal.SIGTERM, signal_handler)
 
-    # --- Startup sequence ---
-    # Wait for clock (only need one node to check)
-    if not node1.wait_for_clock():
-        node1.get_logger().error('Aborting: no clock')
+    # Start executor threads FIRST (so callbacks are processed)
+    robot1.start_executor()
+    robot2.start_executor()
+
+    # Give executors a moment to start processing
+    time.sleep(1.0)
+
+    # --- Startup: wait for clock ---
+    if not robot1.wait_for_clock():
+        robot1.get_logger().error('Aborting: no clock')
+        robot1.cleanup()
+        robot2.cleanup()
         rclpy.shutdown()
         return
 
-    # Wait for both action servers
-    node1.get_logger().info('Waiting for Robot 1 (panther) action server...')
-    if not node1.wait_for_server():
-        node1.get_logger().error('Aborting: panther action server not found')
+    # --- Wait for both action servers ---
+    robot1.get_logger().info('Waiting for Robot 1 (panther) action server...')
+    if not robot1.wait_for_server():
+        robot1.get_logger().error('Aborting: Robot 1 action server not found')
+        robot1.cleanup()
+        robot2.cleanup()
         rclpy.shutdown()
         return
 
-    node2.get_logger().info('Waiting for Robot 2 (panther2) action server...')
-    if not node2.wait_for_server():
-        node2.get_logger().error('Aborting: panther2 action server not found')
+    robot1.get_logger().info('Waiting for Robot 2 (panther2) action server...')
+    if not robot2.wait_for_server():
+        robot1.get_logger().error('Aborting: Robot 2 action server not found')
+        robot1.cleanup()
+        robot2.cleanup()
         rclpy.shutdown()
         return
 
-    # Disable e-stop on both robots
-    if not node1.disable_estop():
-        node1.get_logger().warning(
-            'Could not disable e-stop on panther — continuing anyway'
-        )
-    if not node2.disable_estop():
-        node2.get_logger().warning(
-            'Could not disable e-stop on panther2 — continuing anyway'
-        )
+    # --- Disable e-stops ---
+    robot1.disable_estop()
+    robot2.disable_estop()
 
-    # Warmup pause
-    node1.get_logger().info(
+    # --- Warmup ---
+    robot1.get_logger().info(
         f'Both robots ready. Warmup pause: {warmup_secs}s '
         f'(attach profiling tools now!)'
     )
     time.sleep(warmup_secs)
 
-    # --- Start patrol loops in parallel threads ---
-    loop_label = f'{num_loops} loops' if num_loops > 0 else 'infinite loops'
-    node1.get_logger().info(
+    # --- Start patrol threads ---
+    loop_label = (
+        f'{num_loops} loops' if num_loops > 0 else 'infinite loops'
+    )
+    robot1.get_logger().info(
         f'Starting multi-robot patrol ({loop_label} per robot)'
     )
 
-    thread1 = threading.Thread(
-        target=run_patrol,
-        args=(node1, PATROL_ORDER_ROBOT1, num_loops),
+    t1 = threading.Thread(
+        target=robot1.run_patrol,
+        args=(PATROL_ORDER_ROBOT1, num_loops),
         daemon=True,
     )
-    thread2 = threading.Thread(
-        target=run_patrol,
-        args=(node2, PATROL_ORDER_ROBOT2, num_loops),
+    t2 = threading.Thread(
+        target=robot2.run_patrol,
+        args=(PATROL_ORDER_ROBOT2, num_loops),
         daemon=True,
     )
 
-    thread1.start()
-    thread2.start()
+    t1.start()
+    t2.start()
 
-    # Wait for both threads to finish
-    thread1.join()
-    thread2.join()
+    # Wait for both to finish or shutdown
+    while t1.is_alive() or t2.is_alive():
+        if shutdown_event.is_set():
+            break
+        time.sleep(0.5)
+
+    t1.join(timeout=5.0)
+    t2.join(timeout=5.0)
 
     # --- Summary ---
-    total_goals = node1.total_goals + node2.total_goals
-    total_successes = node1.total_successes + node2.total_successes
-    total_failures = node1.total_failures + node2.total_failures
-    overall_rate = (
-        total_successes / total_goals * 100 if total_goals > 0 else 0
-    )
+    total_goals = robot1.total_goals + robot2.total_goals
+    total_success = robot1.total_successes + robot2.total_successes
+    total_fail = robot1.total_failures + robot2.total_failures
+    rate = total_success / total_goals * 100 if total_goals > 0 else 0
 
+    robot1.get_logger().info('')
+    robot1.get_logger().info('══════════ MULTI-ROBOT PATROL SUMMARY ══════════')
     r1_rate = (
-        node1.total_successes / node1.total_goals * 100
-        if node1.total_goals > 0 else 0
+        robot1.total_successes / robot1.total_goals * 100
+        if robot1.total_goals > 0 else 0
     )
     r2_rate = (
-        node2.total_successes / node2.total_goals * 100
-        if node2.total_goals > 0 else 0
+        robot2.total_successes / robot2.total_goals * 100
+        if robot2.total_goals > 0 else 0
     )
-
-    node1.get_logger().info('')
-    node1.get_logger().info('══════════ MULTI-ROBOT PATROL SUMMARY ══════════')
-    node1.get_logger().info(
-        f'  Robot 1 (panther):  {node1.loop_count} loops, '
-        f'{node1.total_successes}/{node1.total_goals} goals '
+    robot1.get_logger().info(
+        f'  Robot 1 (panther):  {robot1.loop_count} loops, '
+        f'{robot1.total_successes}/{robot1.total_goals} goals '
         f'({r1_rate:.0f}%)'
     )
-    node1.get_logger().info(
-        f'  Robot 2 (panther2): {node2.loop_count} loops, '
-        f'{node2.total_successes}/{node2.total_goals} goals '
+    robot1.get_logger().info(
+        f'  Robot 2 (panther2): {robot2.loop_count} loops, '
+        f'{robot2.total_successes}/{robot2.total_goals} goals '
         f'({r2_rate:.0f}%)'
     )
-    node1.get_logger().info(
-        f'  TOTAL:              '
-        f'{total_successes}/{total_goals} goals '
-        f'({overall_rate:.0f}%)'
+    robot1.get_logger().info(
+        f'  TOTAL:              {total_success}/{total_goals} '
+        f'({rate:.0f}%)'
     )
-    node1.get_logger().info('═════════════════════════════════════════════════')
+    robot1.get_logger().info(
+        '═══════════════════════════════════════════════'
+    )
 
+    # Cleanup
+    robot1.cleanup()
+    robot2.cleanup()
     rclpy.shutdown()
 
 
