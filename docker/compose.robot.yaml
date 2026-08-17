@@ -321,3 +321,18 @@ services:
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/panther2/velodyne_points
         observation_topic_type:=pointcloud
+
+  experiment_panther:
+      <<: *nav2-common
+      container_name: experiment_panther
+      volumes:
+        - ./config:/config
+        - ./scripts:/experiment/scripts
+      network_mode: "host"
+      ipc: host
+      depends_on:
+        bt_orchestrator:
+          condition: service_healthy
+          restart: true
+      command: >
+        bash -c "source /ros_entrypoint.sh && python3 /experiment/scripts/single_robot_patrol.py panther 0 5"

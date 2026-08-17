@@ -45,8 +45,8 @@ x-common-config:
 # -- Shared build & runtime config for all Nav2 containers --
 x-nav2-common:
   &nav2-common
-  image: nav2-profiling:latest
   <<: *common-config
+  image: nav2-profiling:latest
   build:
     context: ..
     dockerfile: docker/Dockerfile
@@ -231,3 +231,18 @@ services:
         robot_model:=${ROBOT_MODEL:-panther}
         observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
         observation_topic_type:=pointcloud
+
+  experiment_panther:
+    <<: *nav2-common
+    container_name: experiment_panther
+    volumes:
+      - ./config:/config
+      - ./scripts:/experiment/scripts
+    network_mode: "host"
+    ipc: host
+    depends_on:
+      bt_orchestrator:
+        condition: service_healthy
+        restart: true
+    command: >
+      bash -c "source /ros_entrypoint.sh && python3 /experiment/scripts/single_robot_patrol.py panther 0 5"
