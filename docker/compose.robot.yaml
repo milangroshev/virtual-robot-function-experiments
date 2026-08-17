@@ -104,10 +104,10 @@ services:
         robot_model:=${ROBOT_MODEL:-panther}
         components_config_path:=/config/components.yaml
         add_world_transform:=True
-        x:=3.5
-        y:=-3.5
-        z:=0.2
-        yaw:=1.57
+        x:=11.5
+        y:=-9.3
+        z:=0.0
+        yaw:=1.39
 
   # ===========================================================================
   # ROBOT 1 NAV2 STACK (namespace = panther) — NO CONTROLLER
