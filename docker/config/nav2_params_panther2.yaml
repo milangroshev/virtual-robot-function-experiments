@@ -403,9 +403,9 @@
       set_initial_pose: true
       always_reset_initial_pose: true
       initial_pose:
-        x: 3.311
-        y: -3.150
-        yaw: 1.55
+        x: 11.4
+        y: -9.52
+        yaw: 1.71
 
       tf_broadcast: true
       transform_tolerance: 1.0
