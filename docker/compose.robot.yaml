@@ -335,4 +335,4 @@ services:
           condition: service_healthy
           restart: true
       command: >
-        bash -c "source /ros_entrypoint.sh && python3 /experiment/scripts/two_robot_patrol.py panther 0 5"
+        bash -c "source /ros_entrypoint.sh && python3 /experiment/scripts/two_robot_patrol.py 0 5"
