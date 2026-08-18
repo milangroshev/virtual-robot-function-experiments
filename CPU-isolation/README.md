@@ -1,12 +1,5 @@
 # CPU & Memory Isolation for Virtual Robot Function Experiments
 
-> Based on: *AIRIC: Orchestration of Virtualized Radio Access Networks with Noisy Neighbours*
-> (Salvat Lozano et al., IEEE JSAC 2023)
->
-> Adapted for: **milan-Mini-IT12** — Intel 12th/13th Gen Hybrid CPU
-
----
-
 ## Overview
 
 This setup isolates CPU cores so that virtualized robotic functions
