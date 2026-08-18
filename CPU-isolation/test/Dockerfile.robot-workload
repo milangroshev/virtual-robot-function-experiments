@@ -1,0 +1,5 @@
+FROM ubuntu:22.04
+RUN apt-get update && apt-get install -y stress-ng sysbench linux-tools-generic
+COPY robot_workload.sh /robot_workload.sh
+RUN chmod +x /robot_workload.sh
+CMD ["/robot_workload.sh"]
