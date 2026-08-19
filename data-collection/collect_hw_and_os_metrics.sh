@@ -1,17 +1,17 @@
 #!/bin/bash
 # =============================================================================
-# collect_metrics.sh — HW, OS, and Container resource profiling
+# collect_hw_and_os_metrics.sh — HW, OS, and Container resource profiling
 # =============================================================================
 # Collects hardware counters (perf stat), power (RAPL), and container
 # metrics (docker stats) during Nav2 profiling experiments.
 #
-# Usage: ./collect_metrics.sh <experiment_name> <duration_secs> [container1] [container2]
+# Usage: ./collect_hw_and_os_metrics.sh <experiment_name> <duration_secs> [container1] [container2]
 #
 # Examples:
-#   ./collect_metrics.sh controller_baseline 300
-#   ./collect_metrics.sh controller_2robots 300 panther_controller panther2_controller
-#   ./collect_metrics.sh planner_test 600 panther_planner panther2_planner
-#   ./collect_metrics.sh single_ctrl 300 panther_controller
+#   ./collect_hw_and_os_metrics.sh controller_baseline 300
+#   ./collect_hw_and_os_metrics.sh controller_2robots 300 panther_controller panther2_controller
+#   ./collect_hw_and_os_metrics.sh planner_test 600 panther_planner panther2_planner
+#   ./collect_hw_and_os_metrics.sh single_ctrl 300 panther_controller
 # =============================================================================
 
 set -e
@@ -137,11 +137,16 @@ echo ""
 # =============================================================================
 # 1. PERF STAT — Container 1: IPC, cache, context switches
 # =============================================================================
+# Events are pinned to cpu_core/ PMU explicitly: on hybrid (P/E-core) CPUs the
+# generic names expand to both cpu_core and cpu_atom, and since experiment
+# containers are cpuset-pinned to P-cores the cpu_atom rows are always
+# "<not counted>". Using cpu_core/... emits core counters only.
 echo "[1/4] perf stat: $CONTAINER1 (PIDs: $PIDS1)"
 sudo perf stat -p "$PIDS1" \
-    -e cycles,instructions,cache-misses,cache-references,longest_lat_cache.miss,longest_lat_cache.reference,context-switches,cpu-migrations,page-faults \
+    -e cpu_core/cycles/,cpu_core/instructions/,cpu_core/cache-misses/,cpu_core/cache-references/,cpu_core/longest_lat_cache.miss/,cpu_core/longest_lat_cache.reference/,context-switches,cpu-migrations,page-faults \
     -I 1000 \
     -o "$OUTPUT_DIR/perf_${CONTAINER1}.txt" \
+    2>"$OUTPUT_DIR/perf_${CONTAINER1}.err" \
     sleep "$DURATION" &
 PERF1_PID=$!
 
@@ -151,9 +156,10 @@ PERF1_PID=$!
 if [ "$SINGLE_CONTAINER" = false ]; then
     echo "[2/4] perf stat: $CONTAINER2 (PIDs: $PIDS2)"
     sudo perf stat -p "$PIDS2" \
-        -e cycles,instructions,cache-misses,cache-references,longest_lat_cache.miss,longest_lat_cache.reference,context-switches,cpu-migrations,page-faults \
+        -e cpu_core/cycles/,cpu_core/instructions/,cpu_core/cache-misses/,cpu_core/cache-references/,cpu_core/longest_lat_cache.miss/,cpu_core/longest_lat_cache.reference/,context-switches,cpu-migrations,page-faults \
         -I 1000 \
         -o "$OUTPUT_DIR/perf_${CONTAINER2}.txt" \
+        2>"$OUTPUT_DIR/perf_${CONTAINER2}.err" \
         sleep "$DURATION" &
     PERF2_PID=$!
 else
@@ -169,25 +175,28 @@ sudo perf stat -a \
     -e power/energy-pkg/,power/energy-cores/,power/energy-gpu/ \
     -I 1000 \
     -o "$OUTPUT_DIR/power.txt" \
+    2>"$OUTPUT_DIR/power.err" \
     sleep "$DURATION" &
 POWER_PID=$!
 
 # =============================================================================
-# 4. DOCKER STATS — CPU%, Memory, Network, Block I/O (1 Hz)
+# 4. DOCKER STATS — CPU%, Memory, Network, Block I/O
 # =============================================================================
-echo "[4/4] docker stats: CPU%, memory, network (1 Hz)"
+# Note: docker stats --no-stream takes ~2s per call (daemon sampling window),
+# so with a tight loop the real cadence is ~2s, not 1 Hz.
+echo "[4/4] docker stats: CPU%, memory, network (~2s cadence)"
 echo "timestamp,name,cpu_perc,mem_usage,net_io,block_io,pids" \
     > "$OUTPUT_DIR/docker_stats.csv"
 
 CONTAINERS_LIST="$CONTAINER1"
 [ "$SINGLE_CONTAINER" = false ] && CONTAINERS_LIST="$CONTAINER1 $CONTAINER2"
 
-for i in $(seq 1 "$DURATION"); do
+END=$((SECONDS + DURATION))
+while [ $SECONDS -lt $END ]; do
     TIMESTAMP=$(date +%s.%N)
     docker stats $CONTAINERS_LIST --no-stream \
         --format "${TIMESTAMP},{{.Name}},{{.CPUPerc}},{{.MemUsage}},{{.NetIO}},{{.BlockIO}},{{.PIDs}}" \
         >> "$OUTPUT_DIR/docker_stats.csv" 2>/dev/null
-    sleep 1
 done &
 DOCKER_PID=$!
 
@@ -212,18 +221,61 @@ cleanup() {
 }
 trap cleanup SIGINT SIGTERM
 
-wait $PERF1_PID 2>/dev/null
-[ -n "$PERF2_PID" ] && wait $PERF2_PID 2>/dev/null
-wait $POWER_PID 2>/dev/null
-wait $DOCKER_PID 2>/dev/null
+# Wait for all collectors. Done in the main shell (a subshell cannot wait on
+# this shell's children) and with `set +e` so a non-zero collector exit (e.g.
+# perf event unavailable) does not abort the script.
+set +e
+wait "$PERF1_PID" 2>/dev/null
+PERF1_STATUS=$?
+if [ -n "$PERF2_PID" ]; then
+    wait "$PERF2_PID" 2>/dev/null
+    PERF2_STATUS=$?
+fi
+wait "$POWER_PID" 2>/dev/null
+POWER_STATUS=$?
+wait "$DOCKER_PID" 2>/dev/null
+DOCKER_STATUS=$?
+set -e
 
 # =============================================================================
 # Save container process trees and logs
 # =============================================================================
 echo ""
 echo "--- Saving experiment logs ---"
-docker logs experiment_runner > "$OUTPUT_DIR/patrol_log.txt" 2>&1 || \
-    echo "No experiment_runner container found" > "$OUTPUT_DIR/patrol_log.txt"
+if docker inspect experiment_runner &>/dev/null; then
+    docker logs experiment_runner > "$OUTPUT_DIR/patrol_log.txt" 2>&1
+elif docker inspect "$CONTAINER1" &>/dev/null; then
+    docker logs "$CONTAINER1" > "$OUTPUT_DIR/patrol_log.txt" 2>&1
+else
+    echo "No experiment_runner or $CONTAINER1 container found" > "$OUTPUT_DIR/patrol_log.txt"
+fi
+
+# =============================================================================
+# Validate collected outputs
+# =============================================================================
+echo ""
+echo "--- Validating collectors ---"
+[ "$PERF1_STATUS" = 0 ] \
+    && echo "perf $CONTAINER1: OK" \
+    || echo "WARNING: perf $CONTAINER1 exited with status $PERF1_STATUS"
+[ -z "$PERF2_PID" ] && echo "perf $CONTAINER2: skipped (single container mode)"
+[ -n "$PERF2_PID" ] && { [ "$PERF2_STATUS" = 0 ] \
+    && echo "perf $CONTAINER2: OK" \
+    || echo "WARNING: perf $CONTAINER2 exited with status $PERF2_STATUS"; }
+[ "$POWER_STATUS" = 0 ] \
+    && echo "power (RAPL): OK" \
+    || echo "WARNING: power (RAPL) exited with status $POWER_STATUS"
+[ "$DOCKER_STATUS" = 0 ] \
+    && echo "docker stats: OK" \
+    || echo "WARNING: docker stats exited with status $DOCKER_STATUS"
+
+for f in "$OUTPUT_DIR"/perf_*.txt "$OUTPUT_DIR"/power.txt "$OUTPUT_DIR"/docker_stats.csv; do
+    [ -f "$f" ] || continue
+    [ -s "$f" ] || echo "WARNING: $f is empty (collector produced no output)"
+done
+for f in "$OUTPUT_DIR"/*.err; do
+    [ -s "$f" ] && echo "WARNING: errors in $f:" && cat "$f"
+done
 
 # =============================================================================
 # Summary

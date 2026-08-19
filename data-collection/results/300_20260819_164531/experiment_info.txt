@@ -1,0 +1,9 @@
+Experiment: 300
+Date: Wed Aug 19 04:45:31 PM CEST 2026
+Duration: robot1s
+Container 1: robot2 (Worker PIDs: 39889,39890)
+Container 2: panther2_controller (Worker PIDs: N/A)
+CPU: 12th Gen Intel(R) Core(TM) i7-1280P
+Cores: 8
+Kernel: 7.0.0-28-generic
+Docker: 29.7.2

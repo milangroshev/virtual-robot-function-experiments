@@ -1,0 +1,4 @@
+stress-ng: info:  [8] setting to a 0 second run per stressor
+stress-ng: info:  [8] dispatching hogs: 1 matrix
+stress-ng: info:  [9] setting to a 0 second run per stressor
+stress-ng: info:  [9] dispatching hogs: 1 cache

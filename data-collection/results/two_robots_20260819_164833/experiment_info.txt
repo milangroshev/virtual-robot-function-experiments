@@ -1,0 +1,9 @@
+Experiment: two_robots
+Date: Wed Aug 19 04:48:33 PM CEST 2026
+Duration: 300s
+Container 1: robot1 (Worker PIDs: 39756,39757)
+Container 2: robot2 (Worker PIDs: 39889,39890)
+CPU: 12th Gen Intel(R) Core(TM) i7-1280P
+Cores: 8
+Kernel: 7.0.0-28-generic
+Docker: 29.7.2
