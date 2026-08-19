@@ -1,6 +1,0 @@
-# started on Wed Aug 19 16:45:35 2026
-
-#           time             counts   unit events
-     0.002481466               0.03 Joules power/energy-pkg/                                                     
-     0.002481466               0.01 Joules power/energy-cores/                                                   
-     0.002481466               0.00 Joules power/energy-gpu/                                                     

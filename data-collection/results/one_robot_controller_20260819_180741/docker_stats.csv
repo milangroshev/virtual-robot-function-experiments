@@ -1,0 +1,10 @@
+timestamp,name,cpu_perc,mem_usage,net_io,block_io,pids
+1787155661.453678603,panther_controller,24.99%,112.9MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155662.491323622,panther_controller,25.87%,113.3MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155664.496827947,panther_controller,25.01%,113.2MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155666.502901946,panther_controller,25.32%,113.3MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155668.508903038,panther_controller,22.42%,113.3MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155670.514995826,panther_controller,24.91%,113.1MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155672.522067157,panther_controller,27.27%,113.1MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155674.527161426,panther_controller,22.59%,113.2MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56
+1787155676.533682048,panther_controller,23.23%,112.8MiB / 31.05GiB,0B / 0B,1.72MB / 1.43MB,56

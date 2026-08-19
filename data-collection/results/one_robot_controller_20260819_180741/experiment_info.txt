@@ -1,0 +1,9 @@
+Experiment: one_robot_controller
+Date: Wed Aug 19 06:07:41 PM CEST 2026
+Duration: 300s
+Container 1: panther_controller (Worker PIDs: 45808,45809,45810)
+CPU: 12th Gen Intel(R) Core(TM) i7-1280P
+BIOS 12th Gen Intel(R) Core(TM) i7-1280P To Be Filled By O.E.M. CPU @ 2.8GHz
+Cores: 8
+Kernel: 7.0.0-28-generic
+Docker: 29.7.2

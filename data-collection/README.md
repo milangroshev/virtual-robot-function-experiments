@@ -13,31 +13,53 @@ stats`) while the experiment workload is running.
 ## Usage
 
 ```bash
-sudo ./collect_hw_and_os_metrics.sh <experiment_name> <duration_secs> [container1] [container2]
+sudo ./collect_hw_and_os_metrics.sh <experiment_name> <duration_secs> <container1> [container2] [container3] [container4] [container5]
 ```
 
-| Argument         | Default              | Description                                  |
-| ---------------- | -------------------- | -------------------------------------------- |
-| `experiment_name`| `baseline`           | Label; results go to `results/<name>_<ts>/` |
-| `duration_secs`  | `300`                | Collection duration in seconds               |
-| `container1`     | `panther_controller` | First container to profile                   |
-| `container2`     | `panther2_controller`| Second container (omit for single-container) |
+| Argument         | Description                                                    |
+| ---------------- | -------------------------------------------------------------- |
+| `experiment_name`| Label; results go to `results/<name>_<ts>/`                   |
+| `duration_secs`  | Collection duration in seconds                                 |
+| `container1..5`  | Containers to profile (1–5; at least 1 required)               |
+
+Listed containers that are not running are skipped with a warning; the script
+errors out only if none of them are running. This makes it easy to run scaling
+experiments from 1 to 5 robots with the same command.
 
 ### Examples
 
 ```bash
-# Single container, 5 minutes
-sudo ./collect_hw_and_os_metrics.sh controller_baseline 300 panther_controller
+# 1 robot, 5 minutes
+sudo ./collect_hw_and_os_metrics.sh controller_1robot 300 panther_controller
 
-# Two containers, 10 minutes
+# 2 robots, 10 minutes
 sudo ./collect_hw_and_os_metrics.sh controller_2robots 600 panther_controller panther2_controller
+
+# 3 robots
+sudo ./collect_hw_and_os_metrics.sh controller_3robots 300 panther_controller panther2_controller panther3_controller
+
+# 5 robots
+sudo ./collect_hw_and_os_metrics.sh controller_5robots 600 panther_controller panther2_controller panther3_controller panther4_controller panther5_controller
 
 # CPU-isolation stress test (robot1 + robot2, pinned to P-cores)
 sudo ./collect_hw_and_os_metrics.sh two_robots 300 robot1 robot2
 ```
 
 Start the experiment containers *before* running the script — it resolves the
-worker PIDs from the running containers and fails if `container1` has none.
+worker PIDs from the running containers.
+
+## Worker PID discovery
+
+For each container the script profiles the actual workload processes, skipping
+shells, the `ros2 launch` wrapper, and orchestrator/parent processes:
+
+1. **stress-ng workers** — processes whose CMD contains `[run]`
+2. **compiled ROS2 nodes** — processes running binaries under
+   `/opt/ros/<distro>/lib/` (e.g. `controller_server`, `velocity_smoother`,
+   `lifecycle_manager`)
+3. **leaf processes** — non-shell/sleep processes with no children (also
+   excludes the container init)
+4. **container init PID** — last resort
 
 ## Output
 
@@ -45,11 +67,11 @@ Each run writes to `results/<experiment_name>_<YYYYMMDD_HHMMSS>/`:
 
 | File                        | Contents                                                     |
 | --------------------------- | ------------------------------------------------------------ |
-| `perf_<container>.txt`      | Per-PID perf counters, 1 Hz: cycles, instructions, cache misses/references, LLC miss/reference, context switches, migrations, page faults |
+| `perf_<container>.txt`      | Per-container perf counters, 1 Hz: cycles, instructions, cache misses/references, LLC miss/reference, context switches, migrations, page faults (one file per active container) |
 | `power.txt`                 | System-wide RAPL energy: pkg, cores, gpu                      |
-| `docker_stats.csv`          | `timestamp,name,cpu_perc,mem_usage,net_io,block_io,pids` (~2 s cadence) |
-| `experiment_info.txt`       | Experiment metadata (containers, PIDs, CPU, kernel, docker)   |
-| `patrol_log.txt`            | Container logs (`experiment_runner`, else `container1`)       |
+| `docker_stats.csv`          | `timestamp,name,cpu_perc,mem_usage,net_io,block_io,pids` (~2 s cadence, all active containers) |
+| `experiment_info.txt`       | Experiment metadata (active containers, PIDs, CPU, kernel, docker) |
+| `patrol_log.txt`            | Container logs (`experiment_runner`, else first active container) |
 | `*.err`                     | perf stderr (only present if a collector had errors)          |
 
 ## Notes
