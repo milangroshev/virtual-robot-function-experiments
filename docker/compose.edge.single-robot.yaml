@@ -48,6 +48,7 @@ services:
   controller:
     <<: *nav2-common
     container_name: panther_controller
+    cpuset: "0-3,8-9"
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=panther
@@ -55,19 +56,4 @@ services:
         use_sim_time:=True
         robot_model:=panther
         observation_topic:=/panther/velodyne_points
-        observation_topic_type:=pointcloud
-
-  # ===========================================================================
-  # ROBOT 2 CONTROLLER (namespace = panther2)
-  # ===========================================================================
-  controller_2:
-    <<: *nav2-common
-    container_name: panther2_controller
-    command: >
-      ros2 launch husarion_ugv_navigation controller_launch.py
-        namespace:=panther2
-        params_file:=/config/nav2_params_panther2.yaml
-        use_sim_time:=True
-        robot_model:=panther
-        observation_topic:=/panther2/velodyne_points
         observation_topic_type:=pointcloud
