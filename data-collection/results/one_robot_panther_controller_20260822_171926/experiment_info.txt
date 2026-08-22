@@ -1,12 +1,11 @@
-Experiment: two_robots
-Date: Sat Aug 22 04:53:53 PM CEST 2026
-Duration: 300s
-ROS2 Namespaces: panther,panther2
+Experiment: one_robot_panther_controller
+Date: Sat Aug 22 05:19:26 PM CEST 2026
+Duration: 500s
+ROS2 Namespaces: panther
 ROS_DOMAIN_ID: 0
 RMW: rmw_cyclonedds_cpp
 CycloneDDS: /home/milan/repos/virtual-robot-function-experiments/docker/config/cyclonedds-edge.xml
-Container 1: panther_controller (Worker PIDs: 53611,53612,53613)
-Container 2: panther2_controller (Worker PIDs: 53614,53615,53616)
+Container 1: panther_controller (Worker PIDs: 58736,58737,58738)
 CPU: 12th Gen Intel(R) Core(TM) i7-1280P
 BIOS 12th Gen Intel(R) Core(TM) i7-1280P To Be Filled By O.E.M. CPU @ 1.7GHz
 Cores: 8

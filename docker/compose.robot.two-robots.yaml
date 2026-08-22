@@ -65,6 +65,7 @@ services:
         rviz_config:=/config/nav_config.rviz
         namespace:=${ROBOT_NAMESPACE:-panther}
         robot_model:=${ROBOT_MODEL:-panther}
+        gz_headless_mode:=True
 
   # ===========================================================================
   # 0b. ROBOT 2 SPAWNER
