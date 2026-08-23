@@ -39,10 +39,12 @@ services:
     image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
     container_name: gazebo
     <<: *common-config
-    runtime: ""
+    runtime: nvidia
     environment:
       - DISPLAY
       - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
     devices:
       - /dev/dri:/dev/dri
     volumes:
@@ -74,10 +76,12 @@ services:
     image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
     container_name: gz_robot_2
     <<: *common-config
-    runtime: ""
+    runtime: nvidia
     environment:
       - DISPLAY
       - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
     devices:
       - /dev/dri:/dev/dri
     volumes:
