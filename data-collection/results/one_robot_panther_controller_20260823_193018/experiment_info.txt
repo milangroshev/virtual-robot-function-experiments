@@ -1,0 +1,13 @@
+Experiment: one_robot_panther_controller
+Date: Sun Aug 23 07:30:18 PM CEST 2026
+Duration: 500s
+ROS2 Namespaces: panther
+ROS_DOMAIN_ID: 0
+RMW: rmw_cyclonedds_cpp
+CycloneDDS: /home/milan/repos/virtual-robot-function-experiments/docker/config/cyclonedds-edge.xml
+Container 1: panther_controller (Worker PIDs: 79322,79323,79324)
+CPU: 12th Gen Intel(R) Core(TM) i7-1280P
+BIOS 12th Gen Intel(R) Core(TM) i7-1280P To Be Filled By O.E.M. CPU @ 1.7GHz
+Cores: 8
+Kernel: 7.0.0-28-generic
+Docker: 29.7.2
