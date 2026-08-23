@@ -64,7 +64,6 @@ services:
     command: >
       ros2 launch husarion_ugv_gazebo simulation.launch.py
         components_config_path:=/config/components.yaml
-        rviz_config:=/config/nav_config.rviz
         namespace:=${ROBOT_NAMESPACE:-panther}
         robot_model:=${ROBOT_MODEL:-panther}
         gz_headless_mode:=True
