@@ -39,10 +39,12 @@ services:
     image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
     container_name: gazebo
     <<: *common-config
-    runtime: ""
+    runtime: nvidia
     environment:
       - DISPLAY
       - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
     devices:
       - /dev/dri:/dev/dri
     volumes:
@@ -62,9 +64,10 @@ services:
     command: >
       ros2 launch husarion_ugv_gazebo simulation.launch.py
         components_config_path:=/config/components.yaml
-        rviz_config:=/config/nav_config.rviz
         namespace:=${ROBOT_NAMESPACE:-panther}
         robot_model:=${ROBOT_MODEL:-panther}
+        gz_headless_mode:=True
+        use_rviz:=False
 
   # ===========================================================================
   # ROBOT 1 NAV2 STACK (namespace = panther) — NO CONTROLLER
