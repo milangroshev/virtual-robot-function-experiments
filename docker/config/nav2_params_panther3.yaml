@@ -10,7 +10,7 @@
       plugin_lib_names:
         - is_estop # rename it to match standard (is_estop_bt_node)
       action_server_result_timeout: 900.0
-      wait_for_service_timeout: 20
+      wait_for_service_timeout: 20000
 
   bt_navigator_navigate_through_poses_rclcpp_node:
     ros__parameters:
