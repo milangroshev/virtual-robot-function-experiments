@@ -1,0 +1,91 @@
+# =============================================================================
+# HOST 2 (10.205.1.85) — Controllers Only (Profiling Target)
+# =============================================================================
+# Runs ONLY the controller containers for all three robots.
+# All other Nav2 components and Gazebo run on HOST 1 (10.205.10.16).
+#
+# DDS cross-host communication is handled by CycloneDDS with explicit
+# peer discovery configured in cyclonedds.xml.
+#
+# No depends_on or healthcheck — the controllers start and wait for
+# DDS topics from HOST 1. They'll activate once the lifecycle manager
+# on HOST 1's bt_orchestrator discovers them (or they self-activate
+# via their own lifecycle manager).
+#
+# IMPORTANT:
+#   - Same ROS_DOMAIN_ID as HOST 1
+#   - Same cyclonedds.xml with both peer IPs
+#   - Same nav2_params files
+#   - use_sim_time:=True (clock comes from Gazebo on HOST 1 via DDS)
+# =============================================================================
+
+x-common-config:
+  &common-config
+  env_file: .env
+
+x-nav2-common:
+  &nav2-common
+  <<: *common-config
+  image: nav2-profiling:latest
+  build:
+    context: ..
+    dockerfile: docker/Dockerfile
+  environment:
+    - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+    - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
+    - CYCLONEDDS_URI=file:///config/cyclonedds-edge.xml
+  volumes:
+    - ./config:/config
+    - ../maps:/maps
+    - ../husarion_ugv_navigation:/ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_navigation
+  network_mode: "host"
+  ipc: host
+
+services:
+  # ===========================================================================
+  # ROBOT 1 CONTROLLER (namespace = panther)
+  # ===========================================================================
+  controller:
+    <<: *nav2-common
+    container_name: panther_controller
+    cpuset: "0-3,8-9"
+    command: >
+      ros2 launch husarion_ugv_navigation controller_launch.py
+        namespace:=panther
+        params_file:=/config/nav2_params_panther1.yaml
+        use_sim_time:=True
+        robot_model:=panther
+        observation_topic:=/panther/velodyne_points
+        observation_topic_type:=pointcloud
+
+  # ===========================================================================
+  # ROBOT 2 CONTROLLER (namespace = panther2)
+  # ===========================================================================
+  controller_2:
+    <<: *nav2-common
+    container_name: panther2_controller
+    cpuset: "0-3,8-9"
+    command: >
+      ros2 launch husarion_ugv_navigation controller_launch.py
+        namespace:=panther2
+        params_file:=/config/nav2_params_panther2.yaml
+        use_sim_time:=True
+        robot_model:=panther
+        observation_topic:=/panther2/velodyne_points
+        observation_topic_type:=pointcloud
+
+  # ===========================================================================
+  # ROBOT 3 CONTROLLER (namespace = panther3)
+  # ===========================================================================
+  controller_3:
+    <<: *nav2-common
+    container_name: panther3_controller
+    cpuset: "0-3,8-9"
+    command: >
+      ros2 launch husarion_ugv_navigation controller_launch.py
+        namespace:=panther3
+        params_file:=/config/nav2_params_panther3.yaml
+        use_sim_time:=True
+        robot_model:=panther
+        observation_topic:=/panther3/velodyne_points
+        observation_topic_type:=pointcloud
