@@ -137,7 +137,7 @@ services:
     network_mode: "host"
     ipc: host
     depends_on:
-      gazebo:
+      gz_robot_2:
         condition: service_healthy
         restart: true
     healthcheck:
@@ -182,7 +182,7 @@ services:
     network_mode: "host"
     ipc: host
     depends_on:
-      gazebo:
+      gz_robot_3:
         condition: service_healthy
         restart: true
     healthcheck:
