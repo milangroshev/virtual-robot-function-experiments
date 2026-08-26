@@ -23,6 +23,8 @@
 # Environment (optional):
 #   ROS_DOMAIN_ID     : DDS domain ID                   (default: 0)
 #   RMW_IMPLEMENTATION: RMW backend                     (default: rmw_cyclonedds_cpp)
+#   EXPERIMENT_CPUS   : CPUs reserved for experiment     (default: 0-3)
+#   METRICS_CPUSET    : CPUs for metrics container       (default: 4-19)
 #
 # Examples:
 #   # Baseline — 2 controllers on isolated cores
@@ -31,6 +33,10 @@
 #   # Noisy-neighbor — 2 controllers + 1 contending planner
 #   ./run_experiment.sh ctrl_plus_planner 300 panther,panther2 \
 #       panther_controller panther2_controller panther_planner
+#
+#   # Custom CPU pool (1 P-core)
+#   EXPERIMENT_CPUS="0,1" METRICS_CPUSET="2-19" \
+#       ./run_experiment.sh small_pool 300 panther panther_controller
 # =============================================================================
 
 set -e
@@ -41,6 +47,12 @@ if [ "$#" -lt 4 ]; then
     echo ""
     echo "  ros2_namespaces : comma-separated ROS2 namespaces (e.g. panther,panther2)"
     echo "  containerN      : Docker containers to profile with perf/docker-stats"
+    echo ""
+    echo "Environment variables:"
+    echo "  EXPERIMENT_CPUS  : CPUs for experiment pool  (default: 0-3)"
+    echo "  METRICS_CPUSET   : CPUs for metrics container (default: 4-19)"
+    echo "  ROS_DOMAIN_ID    : DDS domain ID              (default: 0)"
+    echo "  RMW_IMPLEMENTATION : RMW backend              (default: rmw_cyclonedds_cpp)"
     exit 1
 fi
 
@@ -62,72 +74,64 @@ CONFIG_DIR="$(cd "$SCRIPT_DIR/../docker/config" && pwd)"
 ROS_DOMAIN_ID="${ROS_DOMAIN_ID:-0}"
 RMW_IMPL="${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}"
 
+# ── CPU topology (hardcoded to match isolation setup) ────────────────────
+# Default: 2 P-cores for experiments, everything else for metrics/OS
+#
+#   Experiment pool:  CPUs 0-1   (P-Core 0, 4700 MHz)
+#   Metrics/OS:       CPUs 2-19  (unused P-cores + E-cores)
+#
+# Override via environment variables for different pool sizes:
+#   1 P-core:  EXPERIMENT_CPUS="0,1"     METRICS_CPUSET="2-19"
+#   2 P-cores: EXPERIMENT_CPUS="0-3"     METRICS_CPUSET="4-19"
+#   3 P-cores: EXPERIMENT_CPUS="0-3,8-9" METRICS_CPUSET="4-7,10-19"
+EXPERIMENT_CPUS="${EXPERIMENT_CPUS:-0-1}"
+METRICS_CPUSET="${METRICS_CPUSET:-2-19}"
+
 OUTPUT_DIR="results/${EXPERIMENT}_$(date +%Y%m%d_%H%M%S)"
 mkdir -p "$OUTPUT_DIR"
 ABS_OUTPUT_DIR="$(cd "$OUTPUT_DIR" && pwd)"
 
 ROS2_CONTAINER_NAME="ros2_metrics_${EXPERIMENT}_$$"
 
-# ── Detect isolated CPUs and compute non-isolated set ────────────────────
-# The metrics container MUST NOT run on isolated cores (those are the
-# measurement domain for the profiled containers).
-ISOLATED_CPUS=$(cat /sys/devices/system/cpu/isolated 2>/dev/null || echo "")
-METRICS_CPUSET=""
-
-if [ -n "$ISOLATED_CPUS" ]; then
-    TOTAL_CPUS=$(nproc)
-    METRICS_CPUSET=$(awk -v iso="$ISOLATED_CPUS" -v total="$TOTAL_CPUS" 'BEGIN {
-        n = split(iso, parts, ",")
-        for (i = 1; i <= n; i++) {
-            if (index(parts[i], "-") > 0) {
-                split(parts[i], range, "-")
-                for (c = range[1]+0; c <= range[2]+0; c++) isolated[c] = 1
-            } else {
-                isolated[parts[i]+0] = 1
-            }
-        }
-        first = 1
-        for (c = 0; c < total; c++) {
-            if (!(c in isolated)) {
-                if (!first) printf ","
-                printf "%d", c
-                first = 0
-            }
-        }
-        print ""
-    }')
-fi
-
 echo "=============================================="
 echo " Experiment: $EXPERIMENT"
 echo "=============================================="
-echo " Duration:      ${DURATION}s"
-echo " ROS2 NS:       $ROS2_NS"
-echo " Containers:    ${CONTAINERS[*]}"
-echo " Config dir:    $CONFIG_DIR"
-echo " ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
-echo " RMW:           $RMW_IMPL"
-echo " Output:        $OUTPUT_DIR"
+echo " Duration:        ${DURATION}s"
+echo " ROS2 NS:         $ROS2_NS"
+echo " Containers:      ${CONTAINERS[*]}"
+echo " Experiment CPUs: $EXPERIMENT_CPUS"
+echo " Metrics CPUs:    $METRICS_CPUSET"
+echo " Config dir:      $CONFIG_DIR"
+echo " ROS_DOMAIN_ID:   $ROS_DOMAIN_ID"
+echo " RMW:             $RMW_IMPL"
+echo " Output:          $OUTPUT_DIR"
 echo "=============================================="
 
 # ── Validate prerequisites ───────────────────────────────────────────────
+PREREQ_OK=true
+
 if [ ! -d "$CONFIG_DIR" ]; then
     echo "ERROR: Config directory not found at $CONFIG_DIR"
-    exit 1
+    PREREQ_OK=false
 fi
 
 if [ ! -f "$CONFIG_DIR/cyclonedds-edge.xml" ]; then
     echo "ERROR: CycloneDDS config not found at $CONFIG_DIR/cyclonedds-edge.xml"
-    exit 1
+    PREREQ_OK=false
 fi
 
 if ! docker image inspect nav2-profiling:latest &>/dev/null; then
     echo "ERROR: Docker image 'nav2-profiling:latest' not found. Build it first."
-    exit 1
+    PREREQ_OK=false
 fi
 
 if [ ! -f "$SCRIPT_DIR/collect_ros2_metrics.py" ]; then
     echo "ERROR: collect_ros2_metrics.py not found in $SCRIPT_DIR"
+    PREREQ_OK=false
+fi
+
+if [ "$PREREQ_OK" = false ]; then
+    echo "Aborting due to missing prerequisites."
     exit 1
 fi
 
@@ -209,7 +213,7 @@ echo ""
 echo "--- Processes being profiled ---"
 for cname in "${ACTIVE_CONTAINERS[@]}"; do
     echo "[$cname]"
-    docker top "$cname" -eo pid,ppid,cmd 2>/dev/null | head -20
+    docker top "$cname" -eo pid,ppid,psr,pcpu,comm 2>/dev/null | head -20
     echo ""
 done
 
@@ -222,19 +226,72 @@ done
     echo "ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
     echo "RMW: $RMW_IMPL"
     echo "CycloneDDS: $CONFIG_DIR/cyclonedds-edge.xml"
+    echo ""
+
+    echo "=== Container Configuration ==="
     for i in "${!ACTIVE_CONTAINERS[@]}"; do
-        echo "Container $((i+1)): ${ACTIVE_CONTAINERS[$i]} (Worker PIDs: ${ACTIVE_PIDS[$i]})"
+        cname="${ACTIVE_CONTAINERS[$i]}"
+        cpuset=$(docker inspect "$cname" --format '{{.HostConfig.CpusetCpus}}' 2>/dev/null || echo "unknown")
+        mem_limit=$(docker inspect "$cname" --format '{{.HostConfig.Memory}}' 2>/dev/null || echo "unknown")
+        echo "Container $((i+1)): $cname"
+        echo "  Worker PIDs: ${ACTIVE_PIDS[$i]}"
+        echo "  CpusetCpus: $cpuset"
+        echo "  MemoryLimit: $mem_limit"
     done
+    echo ""
+
+    echo "=== Experiment CPU Pool ==="
+    echo "Experiment CPUs: $EXPERIMENT_CPUS"
+    echo "Metrics CPUs: $METRICS_CPUSET"
+    echo ""
+
+    echo "=== Hardware ==="
     echo "CPU: $(lscpu | grep "Model name" | sed 's/Model name:\s*//')"
     echo "Cores: $(nproc)"
     echo "Kernel: $(uname -r)"
     echo "Docker: $(docker version --format '{{.Server.Version}}' 2>/dev/null || echo "unknown")"
+    echo ""
+
+    echo "=== CPU Topology ==="
+    lscpu --all --extended 2>/dev/null || echo "lscpu --extended not available"
+    echo ""
+
+    echo "=== CPU Isolation State ==="
+    echo "Isolated CPUs: $(cat /sys/devices/system/cpu/isolated 2>/dev/null || echo 'none')"
+    echo "systemd affinity (PID 1): $(taskset -cp 1 2>&1)"
+    echo "Workqueue cpumask: $(cat /sys/devices/virtual/workqueue/*/cpumask 2>/dev/null | sort -u || echo 'unknown')"
+    echo ""
+
+    echo "=== CPU Frequency & Power ==="
+    echo "Turbo boost disabled: $(cat /sys/devices/system/cpu/intel_pstate/no_turbo 2>/dev/null || echo 'unknown')"
+    # Show governor for experiment CPUs (expand ranges like 0-3 to individual CPUs)
+    for cpu in $(echo "$EXPERIMENT_CPUS" | tr ',' '\n' | while read range; do
+        if echo "$range" | grep -q '-'; then
+            start=$(echo "$range" | cut -d- -f1)
+            end=$(echo "$range" | cut -d- -f2)
+            seq "$start" "$end"
+        else
+            echo "$range"
+        fi
+    done); do
+        gov=$(cat /sys/devices/system/cpu/cpu${cpu}/cpufreq/scaling_governor 2>/dev/null || echo "unknown")
+        freq=$(cat /sys/devices/system/cpu/cpu${cpu}/cpufreq/scaling_cur_freq 2>/dev/null || echo "unknown")
+        echo "CPU $cpu: governor=$gov  current_freq=${freq}kHz"
+    done
 } > "$OUTPUT_DIR/experiment_info.txt"
+
+echo "Metadata saved to $OUTPUT_DIR/experiment_info.txt"
 
 # =============================================================================
 # Cleanup — stops ALL collectors on exit/Ctrl+C
 # =============================================================================
+CLEANUP_DONE=false
+
 cleanup() {
+    # Prevent double cleanup
+    if [ "$CLEANUP_DONE" = true ]; then return; fi
+    CLEANUP_DONE=true
+
     echo ""
     echo "--- Stopping all collectors ---"
 
@@ -328,24 +385,17 @@ step=$((step + 1))
 #   - Config dir mounted as /config (matching compose convention)
 #   - Output dir bind-mounted so CSVs land alongside HW metrics
 #   - Env vars identical to docker-compose-edge.yml
+#   - Pinned to non-experiment CPUs to avoid contaminating measurements
 # =============================================================================
 echo "[$step/$TOTAL_STEPS] ROS2 metrics: goal durations, topic rates, jitter (Docker)"
-
-# Build cpuset flag: pin metrics container to non-isolated cores
-CPUSET_FLAG=""
-if [ -n "$METRICS_CPUSET" ]; then
-    CPUSET_FLAG="--cpuset-cpus=$METRICS_CPUSET"
-    echo "  Pinned to CPUs: $METRICS_CPUSET (avoiding isolated: $ISOLATED_CPUS)"
-else
-    echo "  WARNING: No CPU isolation detected — metrics container may share cores with profiled containers"
-fi
+echo "  Metrics container pinned to CPUs: $METRICS_CPUSET (outside experiment pool: $EXPERIMENT_CPUS)"
 
 docker run -d \
     --name "$ROS2_CONTAINER_NAME" \
     --network host \
     --ipc host \
     --pid host \
-    $CPUSET_FLAG \
+    --cpuset-cpus="$METRICS_CPUSET" \
     -e ROS_DOMAIN_ID="$ROS_DOMAIN_ID" \
     -e RMW_IMPLEMENTATION="$RMW_IMPL" \
     -e CYCLONEDDS_URI=file:///config/cyclonedds-edge.xml \
@@ -359,7 +409,7 @@ ROS2_CID=$(docker inspect --format '{{.Id}}' "$ROS2_CONTAINER_NAME" 2>/dev/null)
 if [ -z "$ROS2_CID" ]; then
     echo "WARNING: ROS2 metrics container failed to start — continuing without app metrics"
 else
-    echo "  Container: $ROS2_CONTAINER_NAME ($ROS2_CID)"
+    echo "  Container: $ROS2_CONTAINER_NAME (${ROS2_CID:0:12})"
 fi
 
 # =============================================================================
@@ -390,9 +440,12 @@ if [ -n "$ROS2_CID" ]; then
     ROS2_STATUS=$(docker wait "$ROS2_CONTAINER_NAME" 2>/dev/null)
     # Save container logs for debugging
     docker logs "$ROS2_CONTAINER_NAME" > "$OUTPUT_DIR/ros2_metrics.log" 2>&1
-    docker rm "$ROS2_CONTAINER_NAME" 2>/dev/null
+    docker rm -f "$ROS2_CONTAINER_NAME" 2>/dev/null
 fi
 set -e
+
+# Prevent cleanup from trying to stop already-finished collectors
+trap - EXIT
 
 # =============================================================================
 # Save container process trees and logs
@@ -417,30 +470,46 @@ echo ""
 echo "--- Validating collectors ---"
 for i in "${!ACTIVE_CONTAINERS[@]}"; do
     cname="${ACTIVE_CONTAINERS[$i]}"
-    [ "${PERF_STATUSES[$i]}" = 0 ] \
-        && echo "  perf $cname: OK" \
-        || echo "  WARNING: perf $cname exited with status ${PERF_STATUSES[$i]}"
+    status="${PERF_STATUSES[$i]}"
+    if [ "$status" = "0" ]; then
+        # Also check file is non-empty
+        if [ -s "$OUTPUT_DIR/perf_${cname}.txt" ]; then
+            echo "  ✅ perf $cname: OK"
+        else
+            echo "  ⚠️  perf $cname: exited OK but output is empty"
+        fi
+    else
+        echo "  ❌ perf $cname: exited with status $status"
+    fi
 done
-[ "$POWER_STATUS" = 0 ] \
-    && echo "  power (RAPL): OK" \
-    || echo "  WARNING: power (RAPL) exited with status $POWER_STATUS"
-[ "$DOCKER_STATUS" = 0 ] \
-    && echo "  docker stats: OK" \
-    || echo "  WARNING: docker stats exited with status $DOCKER_STATUS"
-[ "$ROS2_STATUS" = 0 ] \
-    && echo "  ROS2 metrics: OK" \
-    || echo "  WARNING: ROS2 metrics exited with status $ROS2_STATUS (check ros2_metrics.log)"
 
-# Check for empty output files
-for f in "$OUTPUT_DIR"/perf_*.txt "$OUTPUT_DIR"/power.txt "$OUTPUT_DIR"/docker_stats.csv; do
-    [ -f "$f" ] || continue
-    [ -s "$f" ] || echo "  WARNING: $f is empty"
-done
+if [ "$POWER_STATUS" = "0" ] && [ -s "$OUTPUT_DIR/power.txt" ]; then
+    echo "  ✅ power (RAPL): OK"
+else
+    echo "  ⚠️  power (RAPL): exited with status $POWER_STATUS"
+fi
+
+if [ "$DOCKER_STATUS" = "0" ]; then
+    DOCKER_LINES=$(wc -l < "$OUTPUT_DIR/docker_stats.csv")
+    echo "  ✅ docker stats: OK ($((DOCKER_LINES - 1)) samples)"
+else
+    echo "  ⚠️  docker stats: exited with status $DOCKER_STATUS"
+fi
+
+if [ "$ROS2_STATUS" = "0" ]; then
+    echo "  ✅ ROS2 metrics: OK"
+else
+    echo "  ⚠️  ROS2 metrics: exited with status $ROS2_STATUS (check ros2_metrics.log)"
+fi
+
+# Check for missing expected files
 for f in "$OUTPUT_DIR"/ros2_rates.csv "$OUTPUT_DIR"/ros2_goals.csv; do
-    [ -f "$f" ] || echo "  WARNING: $f was not created (ROS2 collector may have failed)"
+    [ -f "$f" ] || echo "  ⚠️  $(basename "$f") was not created"
 done
+
+# Report any stderr content from perf
 for f in "$OUTPUT_DIR"/*.err; do
-    [ -s "$f" ] && echo "  WARNING: errors in $(basename "$f"):" && head -5 "$f"
+    [ -s "$f" ] && echo "  ⚠️  errors in $(basename "$f"):" && head -5 "$f"
 done
 
 # =============================================================================
@@ -455,14 +524,15 @@ echo ""
 ls -lh "$OUTPUT_DIR/"
 echo ""
 echo " Output files:"
-echo "   perf_*.txt       — HW counters per container (IPC, cache, ctx switches)"
-echo "   power.txt        — System-wide RAPL energy"
-echo "   docker_stats.csv — CPU%, memory, net/block I/O per container"
-echo "   ros2_rates.csv   — Topic Hz + jitter (cmd_vel, amcl, plan, costmap)"
-echo "   ros2_goals.csv   — Per-goal duration, status, recovery counts"
+echo "   experiment_info.txt — Full metadata (CPU topology, isolation, governors)"
+echo "   perf_*.txt          — HW counters per container (IPC, cache, ctx switches)"
+echo "   power.txt           — System-wide RAPL energy"
+echo "   docker_stats.csv    — CPU%, memory, net/block I/O per container"
+echo "   ros2_rates.csv      — Topic Hz + jitter (cmd_vel, amcl, plan, costmap)"
+echo "   ros2_goals.csv      — Per-goal duration, status, recovery counts"
 echo ""
 echo " Derived metrics to calculate:"
-echo "   IPC = instructions / cycles"
+echo "   IPC  = instructions / cycles"
 echo "   MPKI = cache-misses / (instructions / 1000)"
 echo "   LLC hit rate = 1 - (LLC.miss / LLC.reference)"
 echo "   Power/goal = total_energy / goals_completed"

@@ -1,0 +1,68 @@
+Experiment: four_robot
+Date: Wed Aug 26 05:21:09 PM CEST 2026
+Duration: 500s
+ROS2 Namespaces: panther,panther2,panther3,panther4
+ROS_DOMAIN_ID: 0
+RMW: rmw_cyclonedds_cpp
+CycloneDDS: /home/milan/repos/virtual-robot-function-experiments/docker/config/cyclonedds-edge.xml
+
+=== Container Configuration ===
+Container 1: panther_controller
+  Worker PIDs: 33111,33112,33113
+  CpusetCpus: 0-1
+  MemoryLimit: 0
+Container 2: panther2_controller
+  Worker PIDs: 33114,33115,33116
+  CpusetCpus: 0-1
+  MemoryLimit: 0
+Container 3: panther3_controller
+  Worker PIDs: 33108,33109,33110
+  CpusetCpus: 0-1
+  MemoryLimit: 0
+Container 4: panther4_controller
+  Worker PIDs: 33105,33106,33107
+  CpusetCpus: 0-1
+  MemoryLimit: 0
+
+=== Experiment CPU Pool ===
+Experiment CPUs: 0,1
+Metrics CPUs: 2-19
+
+=== Hardware ===
+CPU: 12th Gen Intel(R) Core(TM) i7-1280P
+Cores: 8
+Kernel: 7.0.0-30-generic
+Docker: 29.7.2
+
+=== CPU Topology ===
+CPU NODE SOCKET CORE L1d:L1i:L2:L3 ONLINE    MAXMHZ   MINMHZ       MHZ
+  0    0      0    0 0:0:0:0          yes 1800.0000 400.0000 1800.0000
+  1    0      0    0 0:0:0:0          yes 1800.0000 400.0000 1799.9810
+  2    0      0    1 4:4:1:0          yes 1800.0000 400.0000  496.8960
+  3    0      0    1 4:4:1:0          yes 1800.0000 400.0000  400.0000
+  4    0      0    2 8:8:2:0          yes 1800.0000 400.0000  400.0000
+  5    0      0    2 8:8:2:0          yes 1800.0000 400.0000  400.0000
+  6    0      0    3 12:12:3:0        yes 1800.0000 400.0000  400.0000
+  7    0      0    3 12:12:3:0        yes 1800.0000 400.0000  400.0000
+  8    0      0    4 16:16:4:0        yes 1800.0000 400.0000  400.0000
+  9    0      0    4 16:16:4:0        yes 1800.0000 400.0000  400.0000
+ 10    0      0    5 20:20:5:0        yes 1800.0000 400.0000  400.0000
+ 11    0      0    5 20:20:5:0        yes 1800.0000 400.0000  400.0000
+ 12    0      0    6 24:24:6:0        yes 1300.0000 400.0000 1300.2371
+ 13    0      0    7 25:25:6:0        yes 1300.0000 400.0000 1298.7050
+ 14    0      0    8 26:26:6:0        yes 1300.0000 400.0000 1297.6260
+ 15    0      0    9 27:27:6:0        yes 1300.0000 400.0000 1299.9850
+ 16    0      0   10 28:28:7:0        yes 1300.0000 400.0000 1299.6980
+ 17    0      0   11 29:29:7:0        yes 1300.0000 400.0000 1299.4440
+ 18    0      0   12 30:30:7:0        yes 1300.0000 400.0000 1300.1610
+ 19    0      0   13 31:31:7:0        yes 1300.0000 400.0000 1299.9760
+
+=== CPU Isolation State ===
+Isolated CPUs: 
+systemd affinity (PID 1): pid 1's current affinity list: 12-19
+Workqueue cpumask: ff000
+
+=== CPU Frequency & Power ===
+Turbo boost disabled: 1
+CPU 0: governor=performance  current_freq=1799981kHz
+CPU 1: governor=performance  current_freq=1800036kHz

@@ -1,0 +1,638 @@
+[INFO] [launch]: All log files can be found below /root/.ros/log/2026-08-26-13-18-48-879584-milan-Mini-IT12-1
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [controller_server-1]: process started with pid [32]
+[INFO] [velocity_smoother-2]: process started with pid [33]
+[INFO] [lifecycle_manager-3]: process started with pid [34]
+[velocity_smoother-2] [INFO] [1787750329.629379331] [panther.velocity_smoother]: 
+[velocity_smoother-2] 	velocity_smoother lifecycle node launched. 
+[velocity_smoother-2] 	Waiting on external lifecycle transitions to activate
+[velocity_smoother-2] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[lifecycle_manager-3] [INFO] [1787750329.637681609] [panther.lifecycle_manager_controller]: Creating
+[controller_server-1] [INFO] [1787750329.685357889] [panther.controller_server]: 
+[controller_server-1] 	controller_server lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1787750329.707314592] [panther.controller_server]: Creating controller server
+[controller_server-1] [INFO] [1787750329.727884378] [panther.local_costmap.local_costmap]: 
+[controller_server-1] 	local_costmap lifecycle node launched. 
+[controller_server-1] 	Waiting on external lifecycle transitions to activate
+[controller_server-1] 	See https://design.ros2.org/articles/node_lifecycle.html for more information.
+[controller_server-1] [INFO] [1787750329.729190477] [panther.local_costmap.local_costmap]: Creating Costmap
+[lifecycle_manager-3] [INFO] [1787750329.745131880] [panther.lifecycle_manager_controller]: [34m[1mCreating and initializing lifecycle service clients[0m[0m
+[lifecycle_manager-3] [INFO] [1787750329.764580403] [panther.lifecycle_manager_controller]: [34m[1mStarting managed nodes bringup...[0m[0m
+[lifecycle_manager-3] [INFO] [1787750329.764650295] [panther.lifecycle_manager_controller]: [34m[1mConfiguring controller_server[0m[0m
+[controller_server-1] [INFO] [1787750329.799505289] [panther.controller_server]: Configuring controller interface
+[controller_server-1] [INFO] [1787750329.800211936] [panther.controller_server]: getting progress checker plugins..
+[controller_server-1] [INFO] [1787750329.800581230] [panther.controller_server]: getting goal checker plugins..
+[controller_server-1] [INFO] [1787750329.802966634] [panther.controller_server]: Controller frequency set to 10.0000Hz
+[controller_server-1] [INFO] [1787750329.803043135] [panther.local_costmap.local_costmap]: Configuring
+[controller_server-1] [INFO] [1787750329.818719269] [panther.local_costmap.local_costmap]: Using plugin "stvl_layer"
+[controller_server-1] [INFO] [1787750329.890470916] [panther.local_costmap.local_costmap]: stvl_layer being initialized as SpatioTemporalVoxelLayer!
+[controller_server-1] [INFO] [1787750329.890537498] [panther.local_costmap.local_costmap]: stvl_layer's global frame is panther/odom.
+[controller_server-1] [INFO] [1787750329.893518765] [panther.local_costmap.local_costmap]: stvl_layer loaded parameters from parameter server.
+[controller_server-1] [INFO] [1787750329.898180749] [panther.local_costmap.local_costmap]: stvl_layer created underlying voxel grid.
+[controller_server-1] [INFO] [1787750329.904680769] [panther.local_costmap.local_costmap]: Voxel filter activated.
+[controller_server-1] [INFO] [1787750329.918072430] [panther.local_costmap.local_costmap]: stvl_layer initialization complete!
+[controller_server-1] [INFO] [1787750329.918125194] [panther.local_costmap.local_costmap]: Initialized plugin "stvl_layer"
+[controller_server-1] [INFO] [1787750329.918139155] [panther.local_costmap.local_costmap]: Using plugin "inflation_layer"
+[controller_server-1] [INFO] [1787750329.935513015] [panther.local_costmap.local_costmap]: Initialized plugin "inflation_layer"
+[controller_server-1] [INFO] [1787750329.962766381] [panther.controller_server]: Created progress_checker : progress_checker of type nav2_controller::SimpleProgressChecker
+[controller_server-1] [INFO] [1787750329.964861919] [panther.controller_server]: Controller Server has progress_checker  progress checkers available.
+[controller_server-1] [INFO] [1787750329.966016854] [panther.controller_server]: Created goal checker : goal_checker of type nav2_controller::SimpleGoalChecker
+[controller_server-1] [INFO] [1787750329.966928100] [panther.controller_server]: Controller Server has goal_checker  goal checkers available.
+[controller_server-1] [INFO] [1787750329.969289049] [panther.controller_server]: Created controller : FollowPath of type nav2_mppi_controller::MPPIController
+[controller_server-1] [INFO] [1787750329.974227194] [panther.controller_server]: Controller period is equal to model dt. Control sequence shifting is ON
+[controller_server-1] [INFO] [1787750329.977349034] [panther.controller_server]: ConstraintCritic instantiated with 1 power and 4.000000 weight.
+[controller_server-1] [INFO] [1787750329.977403136] [panther.controller_server]: Critic loaded : mppi::critics::ConstraintCritic
+[controller_server-1] [INFO] [1787750329.979222280] [panther.controller_server]: InflationCostCritic instantiated with 1 power and 300.000000 / 0.015000 weights. Critic will collision check based on footprint cost.
+[controller_server-1] [INFO] [1787750329.979276267] [panther.controller_server]: Critic loaded : mppi::critics::CostCritic
+[controller_server-1] [INFO] [1787750329.979628545] [panther.controller_server]: GoalCritic instantiated with 1 power and 5.000000 weight.
+[controller_server-1] [INFO] [1787750329.979651656] [panther.controller_server]: Critic loaded : mppi::critics::GoalCritic
+[controller_server-1] [INFO] [1787750329.980061620] [panther.controller_server]: GoalAngleCritic instantiated with 1 power, 3.000000 weight, 0.100000 angular threshold and symmetric_yaw_tolerance disabled
+[controller_server-1] [INFO] [1787750329.980085145] [panther.controller_server]: Critic loaded : mppi::critics::GoalAngleCritic
+[controller_server-1] [INFO] [1787750329.980683595] [panther.controller_server]: ReferenceTrajectoryCritic instantiated with 1 power and 14.000000 weight
+[controller_server-1] [INFO] [1787750329.980747937] [panther.controller_server]: Critic loaded : mppi::critics::PathAlignCritic
+[controller_server-1] [INFO] [1787750329.981153955] [panther.controller_server]: Critic loaded : mppi::critics::PathFollowCritic
+[controller_server-1] [INFO] [1787750329.981720283] [panther.controller_server]: PathAngleCritic instantiated with 1 power and 2.000000 weight. Mode set to: Forward Preference
+[controller_server-1] [INFO] [1787750329.981744927] [panther.controller_server]: Critic loaded : mppi::critics::PathAngleCritic
+[controller_server-1] [INFO] [1787750329.982064864] [panther.controller_server]: PreferForwardCritic instantiated with 1 power and 7.000000 weight.
+[controller_server-1] [INFO] [1787750329.982083455] [panther.controller_server]: Critic loaded : mppi::critics::PreferForwardCritic
+[controller_server-1] [INFO] [1787750329.985150349] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750329.990613821] [MPPIController]: Configured MPPI Controller: FollowPath
+[controller_server-1] [INFO] [1787750329.990643132] [panther.controller_server]: Controller Server has FollowPath  controllers available.
+[lifecycle_manager-3] [INFO] [1787750329.998068790] [panther.lifecycle_manager_controller]: [34m[1mConfiguring velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1787750329.998661079] [panther.velocity_smoother]: Configuring velocity smoother
+[lifecycle_manager-3] [INFO] [1787750330.006221674] [panther.lifecycle_manager_controller]: [34m[1mActivating controller_server[0m[0m
+[controller_server-1] [INFO] [1787750330.006721507] [panther.controller_server]: Activating
+[controller_server-1] [INFO] [1787750330.006761614] [panther.local_costmap.local_costmap]: Activating
+[controller_server-1] [INFO] [1787750330.006771086] [panther.local_costmap.local_costmap]: Checking transform
+[controller_server-1] [INFO] [1787750330.006813673] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750330.506897907] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750331.006889953] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750331.506891701] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750332.006888249] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750332.506888848] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750333.006886990] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750333.506887245] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750334.006863042] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750334.506995118] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750335.006891006] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750335.506887367] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750336.006993954] [panther.local_costmap.local_costmap]: Timed out waiting for transform from panther/base_link to panther/odom to become available, tf error: Invalid frame ID "panther/odom" passed to canTransform argument target_frame - frame does not exist
+[controller_server-1] [INFO] [1787750336.507155280] [panther.local_costmap.local_costmap]: start
+[controller_server-1] [INFO] [1787750336.507222346] [panther.local_costmap.local_costmap]: stvl_layer was activated.
+[controller_server-1] [WARN] [1787750336.709294405] [panther.controller_server]: Parameter controller_server.verbose not found
+[controller_server-1] [INFO] [1787750336.710393308] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750336.711343768] [MPPIController]: Activated MPPI Controller: FollowPath
+[controller_server-1] [INFO] [1787750336.711375020] [panther.controller_server]: Creating bond (controller_server) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1787750336.821819511] [panther.lifecycle_manager_controller]: Server controller_server connected with bond.
+[lifecycle_manager-3] [INFO] [1787750336.822340032] [panther.lifecycle_manager_controller]: [34m[1mActivating velocity_smoother[0m[0m
+[velocity_smoother-2] [INFO] [1787750336.823063647] [panther.velocity_smoother]: Activating
+[velocity_smoother-2] [INFO] [1787750336.823155952] [panther.velocity_smoother]: Creating bond (velocity_smoother) to lifecycle manager.
+[lifecycle_manager-3] [INFO] [1787750336.928577904] [panther.lifecycle_manager_controller]: Server velocity_smoother connected with bond.
+[lifecycle_manager-3] [INFO] [1787750336.928628365] [panther.lifecycle_manager_controller]: [34m[1mManaged nodes are active[0m[0m
+[lifecycle_manager-3] [INFO] [1787750336.928644337] [panther.lifecycle_manager_controller]: [34m[1mCreating bond timer...[0m[0m
+[controller_server-1] [INFO] [1787750378.911570691] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [WARN] [1787750378.911635038] [panther.controller_server]: No goal checker was specified in parameter 'current_goal_checker'. Server will use only plugin loaded goal_checker . This warning will appear once.
+[controller_server-1] [WARN] [1787750378.911655605] [panther.controller_server]: No progress checker was specified in parameter 'current_progress_checker'. Server will use only plugin loaded progress_checker . This warning will appear once.
+[controller_server-1] [INFO] [1787750380.012532323] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750381.011829203] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750382.711830516] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750383.713570659] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750384.713529960] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750385.811877780] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750386.811853596] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750387.811833116] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750388.911872224] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750389.912521030] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750391.011935732] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750392.012507714] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750393.011843058] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750394.111852232] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750395.111888613] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750396.211826124] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750397.211848792] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750398.311933380] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750399.313796751] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750400.314619092] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750401.311825660] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750402.411827121] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750403.414267154] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750404.412504063] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750405.512135896] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750406.512506406] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750407.512704216] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750408.511876701] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750409.611858037] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750410.611827148] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750411.611865682] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750412.714344362] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750413.711870553] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750414.714115340] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750415.812505167] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750416.812509606] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750417.813273960] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750418.812520037] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750419.911897559] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750420.911968221] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750421.617137774] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750421.619791537] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750421.748628322] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1787750422.849133225] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750423.849067218] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750424.949066913] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750425.949025071] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750426.949023689] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750428.049039892] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750429.049030479] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750430.049065617] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750431.149036668] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750432.149038865] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750433.249618340] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750434.249032655] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750435.349033030] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750436.349388565] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750437.349185709] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750438.449025859] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750439.449086339] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750440.449057022] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750441.449032509] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750442.549037696] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750443.549038444] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750444.549051593] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750445.649028944] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750446.649059191] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750447.649069182] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750448.749149001] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750449.749069229] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750450.749027148] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750451.749607797] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750452.849057941] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750453.849068522] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750454.849031779] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750455.849082302] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750456.949114754] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750457.949037172] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750458.949037660] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750460.049071108] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750461.049074177] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750462.049173335] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750463.049031133] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750464.149041752] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750465.149039554] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750466.149036315] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750467.249099670] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750468.249038221] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750469.249188083] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750470.249026770] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750471.349147233] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750472.349036156] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750473.349251208] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750474.349041928] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750475.449940496] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750476.449065472] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750477.449058880] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750478.449023087] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750479.549199284] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750480.549065737] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750481.549065594] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750481.655939363] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750481.657641916] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750481.850996825] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1787750482.951177583] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750483.951265978] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750485.051220487] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750486.051183887] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750487.151459724] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750488.151217153] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750489.251207133] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750490.251183523] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750491.251175782] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750492.351420433] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750493.351188611] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750494.451183522] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750495.451658894] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750496.551185839] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750497.551218414] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750498.551222475] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750499.651220316] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750500.651220275] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750501.751223082] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750502.751186137] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750503.751188836] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750504.851191049] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750505.851216177] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750506.851209698] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750507.951197248] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750508.951187062] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750509.951190676] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750511.051183388] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750512.051205128] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750513.051220878] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750514.151190288] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750515.151193891] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750516.151179228] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750517.151187655] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750518.251205715] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750519.251238531] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750520.251182274] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750521.251207566] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750522.351190034] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750523.351191806] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750524.351194275] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750525.351190068] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750526.451191149] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750527.451221658] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750528.451179509] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750529.451176142] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750530.551222062] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750531.551189909] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750532.551221567] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750533.651180437] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750534.651178258] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750535.651184873] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750536.651231691] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750537.751227846] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750538.751322951] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750539.752832432] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750540.851206291] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750541.851182975] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750542.851165326] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750543.951188319] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750544.954223343] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750545.951179705] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750546.951254737] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750548.051330843] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750549.051216993] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750550.051187053] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750551.051241225] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750552.151192953] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750552.758803534] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750552.759016258] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750552.913614006] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1787750554.014339335] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750555.014517827] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750556.114344974] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750557.114339947] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750558.114338132] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750559.214344696] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750560.214334909] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750561.314344453] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750562.314333756] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750563.314336374] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750564.414374801] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750565.414354232] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750566.414366232] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750567.514372913] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750568.514366412] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750569.614368636] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750570.614361650] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750571.714335272] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750572.714345145] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750573.714337121] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750574.814375563] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750575.814516923] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750576.914361952] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750577.914338432] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750579.014337508] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750580.014358088] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750581.014391201] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750582.114337970] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750583.114337232] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750584.114336828] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750585.214359544] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750586.214404295] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750587.214357806] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750588.314347847] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750589.314332934] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750590.314341629] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750591.314336348] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750592.414400678] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750593.414524136] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750594.414369922] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750595.514625444] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750596.514338080] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750597.514336448] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750598.514337522] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750599.614329078] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750600.614395679] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750601.614408194] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750602.714629571] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750603.714391826] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750604.714337128] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750605.714336627] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750606.814377688] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750607.814331698] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750608.814326625] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750609.914326957] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750610.914338263] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750611.914623288] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750612.914370746] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750614.014344634] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750615.014358894] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750616.014365859] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750617.014443007] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750618.114486576] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750619.114334686] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750620.114969993] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750621.114335071] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750622.214356333] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750623.214358524] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750624.214362333] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750625.214358036] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750626.314445158] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750627.314337356] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750628.314469673] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750629.314371831] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750630.414328926] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750631.414372097] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750632.414398775] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750633.414330068] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750634.414361302] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750635.514337680] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750635.917953292] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750635.918236911] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750636.101207875] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1787750637.202790380] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750638.202786124] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750639.302805496] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750640.402788984] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750641.402808176] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750642.502790820] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750643.502792070] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750644.602791606] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750645.602802666] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750646.702792038] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750647.702782988] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750648.802804081] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750649.902794034] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750650.902804186] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750652.002789212] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750653.002805456] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750654.102804659] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750655.102794892] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750656.202803326] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750657.202784316] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750658.302785719] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750659.302788630] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750660.402805337] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750661.402795502] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750662.402827590] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750663.502784753] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750664.502829458] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750665.602803795] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750666.602809409] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750667.702787754] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750668.702789077] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750669.802789785] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750670.802803372] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750671.802795479] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750672.902790139] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750673.902804034] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750675.002782426] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750676.002798624] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750677.002787702] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750678.102790529] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750679.102809058] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750680.102803472] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750681.202804063] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750682.202803323] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750683.202782054] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750684.302786543] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750685.302813970] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750686.302784974] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750687.402794787] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750688.402875886] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750689.402796137] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750690.502794738] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750691.505942126] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750692.502790666] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750693.502788535] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750694.602782852] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750695.602788248] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750696.602789504] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750697.702801929] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750698.702801941] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750699.702808501] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750700.802795626] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750701.802785291] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750702.802786197] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750703.902809681] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750704.902827897] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750705.902782790] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750706.902788000] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750708.002793543] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750709.002795975] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750710.002802054] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750711.102797638] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750712.102802622] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750713.102784684] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750714.102784043] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750715.202808367] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750716.202803376] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750717.202795478] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750718.302790562] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750719.302789432] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750720.302782570] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750721.302931078] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750722.402799409] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750723.402802435] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750724.402805023] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750725.502875199] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750726.502802986] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750727.502784193] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750728.502801782] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750729.602809683] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750730.602792786] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750731.615409883] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750732.703783711] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750733.702796423] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750734.702784905] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750735.704517177] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750736.802785594] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750737.802972292] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750738.802784187] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750739.902797469] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750740.902789249] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750741.902788796] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750742.902806176] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750744.002790617] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750745.002902239] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750745.205856162] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750745.206930277] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750745.324435728] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1787750746.424631586] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750747.424624967] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750748.524628269] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750749.524644430] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750750.624766133] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750751.624636527] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750752.624785496] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750753.724642042] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750754.724653301] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750755.724621533] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750756.824618740] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750757.824687140] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750758.924647596] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750759.924730843] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750760.924682524] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750762.024625981] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750763.024636518] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750764.124644015] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750765.124722294] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750766.124635579] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750767.224665742] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750768.224700566] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750769.224629952] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750770.224622176] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750771.324617685] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750772.424617835] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750773.424636101] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750774.424638901] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750775.424615650] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750776.524638176] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750777.524617084] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750778.524618062] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750779.624616012] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750780.624641258] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750781.624644797] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750782.624617645] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750783.724615647] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750784.724636347] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750785.724728477] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750786.824626909] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750787.824638882] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750788.824707464] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750789.824636849] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750790.924634527] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750791.924615639] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750792.924681693] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750793.924671660] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750795.024615978] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750796.024627364] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750797.024615647] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750798.125554421] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750799.124618251] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750800.124647315] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750801.124622554] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750802.224645522] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750803.224724426] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750804.224679516] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750805.224615879] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750806.324733451] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750807.324623480] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750808.324685897] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750809.324652781] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750810.424617405] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750811.424618917] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750812.424687919] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750813.424616147] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750814.524635660] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750815.524652525] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750816.524955897] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750817.524616041] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750817.529061404] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750817.529373891] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750817.649342693] [panther.controller_server]: Received a goal, begin computing control effort.
+[controller_server-1] [INFO] [1787750818.749612743] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750819.749722248] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750820.849558223] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750821.849640884] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750822.849542533] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750823.949556076] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750824.949548478] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750826.049542454] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750827.049533714] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750828.149668897] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750829.149506546] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750830.149551660] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750831.249541770] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750832.249553518] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750833.349518268] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750834.349773899] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750835.452717420] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750836.449559174] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750837.449554265] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750838.549552451] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750839.552778124] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750840.649552073] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750841.649554259] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750842.649547216] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750843.749548898] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750844.749555667] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750845.849551807] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750846.849559557] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750847.849518213] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750848.949564242] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750849.949633942] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750850.949563345] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750852.049547489] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750853.049519929] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750854.049819617] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750855.149548458] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750856.149750513] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750857.149760046] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750858.249520145] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750859.249564558] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750860.249550017] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750861.349514530] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750862.349573392] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750863.349548970] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750864.349535257] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750865.449511074] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750866.449550122] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750867.449549472] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750868.549552646] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750869.549681470] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750870.549619643] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750871.649515045] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750872.649560972] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750873.649508646] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750874.649511847] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750875.749686344] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750876.749718687] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750877.749517557] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750878.749535887] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750879.849549695] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750880.849562310] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750881.849558320] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750882.849504998] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750883.949554099] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750884.949508349] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750885.949531983] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750887.049514025] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750888.049511041] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750889.049579489] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750890.049595988] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750891.149550680] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750892.158377100] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750893.149516914] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750894.249522194] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750895.249550904] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750896.249519753] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750897.249510113] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750898.349550478] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750899.349555694] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750900.349514389] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750901.449521101] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750902.449550206] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750903.449509003] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750904.549550435] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750905.549518017] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750906.549554076] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750907.549510646] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750908.549558078] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750909.649508698] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750910.649556119] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750911.651750240] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750912.749506531] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750913.749589721] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750914.749554127] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750915.749571912] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750916.849594533] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750917.853836899] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750918.849545340] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750919.849502833] [panther.controller_server]: Passing new path to controller.
+[controller_server-1] [INFO] [1787750919.952702851] [panther.controller_server]: Reached the goal!
+[controller_server-1] [INFO] [1787750919.952922221] [panther.controller_server]: Optimizer reset
+[controller_server-1] [INFO] [1787750920.035519127] [panther.controller_server]: Received a goal, begin computing control effort.
