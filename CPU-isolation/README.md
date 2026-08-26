@@ -417,24 +417,6 @@ degrades the service. Record the miss rate at each scale point.
 
 ---
 
-## Mapping to AIRIC Paper
-
-| Paper (i7-7700K) | This setup |
-|---|---|
-| Cores 0,4 → OS | **E-cores (CPUs 12-19) → OS** (better — purpose-built) |
-| Cores 1,5 → vBS pool (Phys #1) | **CPUs 0,1 → experiment pool (P-Core 0)** |
-| Cores 2,6 → vBS pool (Phys #2) | CPUs 2,3 → expanded pool (P-Core 1) |
-| Cores 3,7 → vBS pool (Phys #3) | CPUs 8,9 → expanded pool (P-Core 4) |
-| 3 P-cores, 6 threads, ~80% per vBS | **1 P-core, 2 threads, ~30% per container** |
-| Scale: 1–5 vBSs on fixed pool | **Scale: 1–5 containers on fixed pool** |
-| `systemd CPUAffinity` for OS | ✅ `CPUAffinity=12-19` |
-| No `isolcpus` | ✅ No `isolcpus` (CFS load balancing active) |
-| Docker `--cpuset-cpus` for pool | ✅ Docker `--cpuset-cpus="0,1"` |
-| `CONFIG_RT_GROUP_SCHED` | Not needed (robot functions use `SCHED_OTHER`) |
-| `explode` column in dataset | **Control loop miss rate from ROS 2 logs** |
-
----
-
 ## Folder Structure
 
 ```
