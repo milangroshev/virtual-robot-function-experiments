@@ -266,9 +266,9 @@ services:
         --field header.frame_id /${ROBOT_NAMESPACE:-panther}/velodyne_points_filtered
         | grep -q velodyne"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
@@ -290,9 +290,9 @@ services:
         --field id /${ROBOT_NAMESPACE:-panther}/bond
         | grep -q amcl"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation localization_standalone_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
@@ -317,9 +317,9 @@ services:
         --field id /${ROBOT_NAMESPACE:-panther}/bond
         | grep -q planner_server"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
@@ -342,9 +342,9 @@ services:
         --field id /${ROBOT_NAMESPACE:-panther}/bond
         | grep -q bt_navigator"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=${ROBOT_NAMESPACE:-panther}
@@ -371,9 +371,9 @@ services:
         --field header.frame_id /panther2/velodyne_points_filtered
         | grep -q velodyne"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
         namespace:=panther2
@@ -395,9 +395,9 @@ services:
         --field id /panther2/bond
         | grep -q amcl"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation localization_standalone_launch.py
         namespace:=panther2
@@ -422,9 +422,9 @@ services:
         --field id /panther2/bond
         | grep -q planner_server"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=panther2
@@ -447,9 +447,9 @@ services:
         --field id /panther2/bond
         | grep -q bt_navigator"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=panther2
@@ -476,9 +476,9 @@ services:
         --field header.frame_id /panther3/velodyne_points_filtered
         | grep -q velodyne"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
         namespace:=panther3
@@ -500,9 +500,9 @@ services:
         --field id /panther3/bond
         | grep -q amcl"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation localization_standalone_launch.py
         namespace:=panther3
@@ -527,9 +527,9 @@ services:
         --field id /panther3/bond
         | grep -q planner_server"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=panther3
@@ -552,9 +552,9 @@ services:
         --field id /panther3/bond
         | grep -q bt_navigator"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=panther3
@@ -581,9 +581,9 @@ services:
         --field header.frame_id /panther4/velodyne_points_filtered
         | grep -q velodyne"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
         namespace:=panther4
@@ -605,9 +605,9 @@ services:
         --field id /panther4/bond
         | grep -q amcl"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation localization_standalone_launch.py
         namespace:=panther4
@@ -632,9 +632,9 @@ services:
         --field id /panther4/bond
         | grep -q planner_server"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=panther4
@@ -657,9 +657,9 @@ services:
         --field id /panther4/bond
         | grep -q bt_navigator"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=panther4
@@ -686,9 +686,9 @@ services:
         --field header.frame_id /panther5/velodyne_points_filtered
         | grep -q velodyne"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
         namespace:=panther5
@@ -710,9 +710,9 @@ services:
         --field id /panther5/bond
         | grep -q amcl"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation localization_standalone_launch.py
         namespace:=panther5
@@ -737,9 +737,9 @@ services:
         --field id /panther5/bond
         | grep -q planner_server"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation planner_launch.py
         namespace:=panther5
@@ -762,9 +762,9 @@ services:
         --field id /panther5/bond
         | grep -q bt_navigator"
       interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
+      timeout: 5s
+      retries: 15
+      start_period: 40s
     command: >
       ros2 launch husarion_ugv_navigation bt_orchestrator_launch.py
         namespace:=panther5
