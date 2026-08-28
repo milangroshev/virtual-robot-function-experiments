@@ -1,0 +1,52 @@
+# =============================================================================
+# HOST 1 (10.205.10.16) — Robot Simulation Only
+# =============================================================================
+# Runs ONLY: gazebo (world + robot spawner for panther)
+# Nav2 stack runs on HOST 2 (10.205.10.5) and the controller runs on HOST 3.
+# =============================================================================
+
+x-common-config:
+  &common-config
+  env_file: ../.env
+
+volumes:
+  shared_tmp:
+
+services:
+  # ===========================================================================
+  # 0. GAZEBO — World + Robot 1 (panther)
+  # ===========================================================================
+  gazebo:
+    image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
+    container_name: gazebo
+    <<: *common-config
+    runtime: nvidia
+    environment:
+      - DISPLAY
+      - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../config:/config
+      - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
+      - shared_tmp:/tmp
+    network_mode: "host"
+    ipc: host
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.2
+        --field header.frame_id /${ROBOT_NAMESPACE:-panther}/odometry/filtered
+        | grep -q odom"
+      interval: 4s
+      timeout: 3s
+      retries: 4
+    command: >
+      ros2 launch husarion_ugv_gazebo simulation.launch.py
+        components_config_path:=/config/components.yaml
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        robot_model:=${ROBOT_MODEL:-panther}
+        gz_headless_mode:=True
+        use_rviz:=False
