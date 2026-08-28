@@ -1,0 +1,190 @@
+# =============================================================================
+# HOST 1 (10.205.10.16) — Robot Simulation Only (Four Robots)
+# =============================================================================
+# Runs ONLY: gazebo + robot spawners for panther, panther2, panther3, panther4.
+# Nav2 stacks run on HOST 2 (10.205.10.5) and controllers run on HOST 3.
+# =============================================================================
+
+x-common-config:
+  &common-config
+  env_file: ../.env
+
+volumes:
+  shared_tmp:
+
+services:
+  # ===========================================================================
+  # 0. GAZEBO — World + Robot 1 (panther)
+  # ===========================================================================
+  gazebo:
+    image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
+    container_name: gazebo
+    <<: *common-config
+    runtime: nvidia
+    environment:
+      - DISPLAY
+      - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../config:/config
+      - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
+      - shared_tmp:/tmp
+    network_mode: "host"
+    ipc: host
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.2
+        --field header.frame_id /${ROBOT_NAMESPACE:-panther}/odometry/filtered
+        | grep -q odom"
+      interval: 4s
+      timeout: 3s
+      retries: 4
+    command: >
+      ros2 launch husarion_ugv_gazebo simulation.launch.py
+        components_config_path:=/config/components.yaml
+        namespace:=${ROBOT_NAMESPACE:-panther}
+        robot_model:=${ROBOT_MODEL:-panther}
+        gz_headless_mode:=True
+        use_rviz:=False
+
+  # ===========================================================================
+  # 0b. ROBOT 2 SPAWNER
+  # ===========================================================================
+  gz_robot_2:
+    image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
+    container_name: gz_robot_2
+    <<: *common-config
+    runtime: nvidia
+    environment:
+      - DISPLAY
+      - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../config:/config
+      - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
+      - shared_tmp:/tmp
+    network_mode: "host"
+    ipc: host
+    depends_on:
+      gazebo:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.2
+        --field header.frame_id /panther2/odometry/filtered
+        | grep -q odom"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_gazebo simulate_robot.launch.py
+        namespace:=panther2
+        robot_model:=${ROBOT_MODEL:-panther}
+        components_config_path:=/config/components.yaml
+        add_world_transform:=True
+        x:=11.5
+        y:=-9.3
+        z:=0.2
+        yaw:=1.39
+
+  # ===========================================================================
+  # 0c. ROBOT 3 SPAWNER
+  # ===========================================================================
+  gz_robot_3:
+    image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
+    container_name: gz_robot_3
+    <<: *common-config
+    runtime: nvidia
+    environment:
+      - DISPLAY
+      - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../config:/config
+      - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
+      - shared_tmp:/tmp
+    network_mode: "host"
+    ipc: host
+    depends_on:
+      gz_robot_2:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.2
+        --field header.frame_id /panther3/odometry/filtered
+        | grep -q odom"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_gazebo simulate_robot.launch.py
+        namespace:=panther3
+        robot_model:=${ROBOT_MODEL:-panther}
+        components_config_path:=/config/components.yaml
+        add_world_transform:=True
+        x:=-10.679
+        y:=-8.904
+        z:=0.2
+        yaw:=-0.23
+
+  # ===========================================================================
+  # 0d. ROBOT 4 SPAWNER
+  # ===========================================================================
+  gz_robot_4:
+    image: husarion/husarion-ugv-gazebo:jazzy-add-parameter-to-disable-orientation
+    container_name: gz_robot_4
+    <<: *common-config
+    runtime: nvidia
+    environment:
+      - DISPLAY
+      - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=all
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ../config:/config
+      - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
+      - shared_tmp:/tmp
+    network_mode: "host"
+    ipc: host
+    depends_on:
+      gz_robot_3:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: >
+        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.2
+        --field header.frame_id /panther4/odometry/filtered
+        | grep -q odom"
+      interval: 4s
+      timeout: 3s
+      retries: 6
+      start_period: 20s
+    command: >
+      ros2 launch husarion_ugv_gazebo simulate_robot.launch.py
+        namespace:=panther4
+        robot_model:=${ROBOT_MODEL:-panther}
+        components_config_path:=/config/components.yaml
+        add_world_transform:=True
+        x:=-10.829
+        y:=13.275
+        z:=0.2
+        yaw:=-1.58
