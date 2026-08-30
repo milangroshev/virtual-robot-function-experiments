@@ -8,6 +8,9 @@
 x-common-config:
   &common-config
   env_file: ../.env
+  environment:
+    - GZ_IP=127.0.0.1
+    - IGN_IP=127.0.0.1
 
 x-nav2-common:
   &nav2-common
