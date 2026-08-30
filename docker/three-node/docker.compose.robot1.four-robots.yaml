@@ -19,10 +19,10 @@ x-nav2-common:
   environment:
     - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
     - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
-    - CYCLONEDDS_URI=file:///config/cyclonedds-nav.xml
+    - CYCLONEDDS_URI=file:///config/cyclonedds-robot.xml
   volumes:
     - ../config:/config
-    - ./config/cyclonedds-nav.xml:/config/cyclonedds-nav.xml
+    - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
     - ../../maps:/maps
     - ../../husarion_ugv_navigation:/ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_navigation
   network_mode: "host"
@@ -214,6 +214,9 @@ services:
   sensor_preproc:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_sensor_preproc
+    depends_on:
+      gazebo:
+        condition: service_healthy
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
@@ -237,6 +240,9 @@ services:
   sensor_preproc_2:
     <<: *nav2-common
     container_name: panther2_sensor_preproc
+    depends_on:
+      gz_robot_2:
+        condition: service_healthy
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
@@ -261,6 +267,9 @@ services:
   sensor_preproc_3:
     <<: *nav2-common
     container_name: panther3_sensor_preproc
+    depends_on:
+      gz_robot_3:
+        condition: service_healthy
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
@@ -285,6 +294,9 @@ services:
   sensor_preproc_4:
     <<: *nav2-common
     container_name: panther4_sensor_preproc
+    depends_on:
+      gz_robot_4:
+        condition: service_healthy
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
