@@ -39,26 +39,6 @@ services:
   # ROBOT 1 NAV2 STACK (namespace = panther) — NO GAZEBO, NO CONTROLLER
   # ===========================================================================
 
-  sensor_preproc:
-    <<: *nav2-common
-    container_name: ${ROBOT_NAMESPACE:-panther}_sensor_preproc
-    healthcheck:
-      test: >
-        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
-        --field header.frame_id /${ROBOT_NAMESPACE:-panther}/velodyne_points_filtered
-        | grep -q velodyne"
-      interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
-    command: >
-      ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
-        namespace:=${ROBOT_NAMESPACE:-panther}
-        observation_topic:=/${ROBOT_NAMESPACE:-panther}/velodyne_points
-        observation_topic_type:=pointcloud
-        use_sim_time:=True
-        robot_model:=${ROBOT_MODEL:-panther}
-
   localization:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_localization
