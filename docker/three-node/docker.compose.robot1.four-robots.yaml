@@ -9,6 +9,25 @@ x-common-config:
   &common-config
   env_file: ../.env
 
+x-nav2-common:
+  &nav2-common
+  <<: *common-config
+  image: nav2-profiling:latest
+  build:
+    context: ../..
+    dockerfile: docker/Dockerfile
+  environment:
+    - ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
+    - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}
+    - CYCLONEDDS_URI=file:///config/cyclonedds-nav.xml
+  volumes:
+    - ../config:/config
+    - ./config/cyclonedds-nav.xml:/config/cyclonedds-nav.xml
+    - ../../maps:/maps
+    - ../../husarion_ugv_navigation:/ros2_ws/src/husarion_ugv_autonomy_ros/husarion_ugv_navigation
+  network_mode: "host"
+  ipc: host
+
 volumes:
   shared_tmp:
 
