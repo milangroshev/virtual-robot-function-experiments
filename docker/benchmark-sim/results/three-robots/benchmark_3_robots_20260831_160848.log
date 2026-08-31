@@ -1,0 +1,176 @@
+[16:08:48] ==========================================
+[16:08:48] BENCHMARK: 3 robot(s), 10s sample
+[16:08:48] ==========================================
+[16:08:48] --- Pre-flight: checking container health ---
+[16:08:48]   gazebo: healthy
+[16:08:48]   gz_robot_2: healthy
+[16:08:48]   gz_robot_3: healthy
+[16:08:48]   panther_sensor_preproc: healthy
+[16:08:48]   panther2_sensor_preproc: healthy
+[16:08:48]   panther3_sensor_preproc: healthy
+[16:08:48] 
+[16:08:48] --- Verifying Gazebo overrides ---
+[16:08:49]   LiDAR update_rate: 5.0 Hz (expected: 5.0)
+[16:08:49]   Horizontal samples: 450 (expected: 450)
+[16:08:49]   Vertical samples:   8 (expected: 8)
+[16:08:49]   Max range:           30.0 m (expected: 30.0)
+[16:08:49]   Physics step size:   0.004 s (expected: 0.004)
+[16:08:49]   ✅ All overrides verified
+[16:08:49] 
+[16:08:49] --- Measuring topic rates (10s per topic) ---
+[16:08:49] 
+[16:08:49] === GLOBAL TOPICS ===
+[16:08:49]   [wall_clock] /clock ...
+[16:08:59]     avg=217.135 Hz | min=0.000s max=0.020s std=0.00205s (n=1741)
+[16:08:59] 
+[16:08:59] === ROBOT: panther ===
+[16:08:59]   [wall_clock] /panther/velodyne_points ...
+[16:09:09]     avg=4.358 Hz | min=0.203s max=0.271s std=0.01924s (n=35)
+[16:09:09]   [sim_time] /panther/velodyne_points ...
+[16:09:20]     avg=5.000 Hz | min=0.192s max=0.208s std=0.00318s (n=38)
+[16:09:20]   [wall_clock] /panther/odometry/filtered ...
+[16:09:30]     avg=40.207 Hz | min=0.019s max=0.057s std=0.00753s (n=328)
+[16:09:30]   [sim_time] /panther/odometry/filtered ...
+[16:09:40]     avg=50.000 Hz | min=0.016s max=0.024s std=0.00080s (n=351)
+[16:09:40]   [wall_clock] /panther/imu/data ...
+[16:09:51]     avg=65.324 Hz | min=0.008s max=0.035s std=0.00559s (n=526)
+[16:09:51]   [sim_time] /panther/imu/data ...
+[16:10:01]     avg=83.333 Hz | min=0.008s max=0.016s std=0.00023s (n=589)
+[16:10:01]   [wall_clock] /tf ...
+[16:10:11]     avg=189.290 Hz | min=0.000s max=0.034s std=0.00552s (n=1525)
+[16:10:11]   [wall_clock] /panther/velodyne_points_filtered ...
+[16:10:22]     avg=3.663 Hz | min=0.240s max=0.319s std=0.02093s (n=29)
+[16:10:22]   [sim_time] /panther/velodyne_points_filtered ...
+[16:10:32]     avg=5.000 Hz | min=0.196s max=0.204s std=0.00100s (n=32)
+[16:10:32]   [wall_clock] /panther/scan ...
+[16:10:42]     avg=3.485 Hz | min=0.251s max=0.347s std=0.02370s (n=29)
+[16:10:42]   [sim_time] /panther/scan ...
+[16:10:53]     avg=5.000 Hz | min=0.200s max=0.200s std=0.00000s (n=31)
+[16:10:53] 
+[16:10:53] === ROBOT: panther2 ===
+[16:10:53]   [wall_clock] /panther2/velodyne_points ...
+[16:11:03]     avg=3.376 Hz | min=0.261s max=0.335s std=0.01935s (n=29)
+[16:11:03]   [sim_time] /panther2/velodyne_points ...
+[16:11:13]     avg=4.996 Hz | min=0.196s max=0.208s std=0.00346s (n=28)
+[16:11:13]   [wall_clock] /panther2/odometry/filtered ...
+[16:11:24]     avg=32.573 Hz | min=0.019s max=0.058s std=0.00899s (n=268)
+[16:11:24]   [sim_time] /panther2/odometry/filtered ...
+[16:11:34]     avg=50.000 Hz | min=0.016s max=0.024s std=0.00073s (n=301)
+[16:11:34]   [wall_clock] /panther2/imu/data ...
+[16:11:44]     avg=52.924 Hz | min=0.009s max=0.049s std=0.00992s (n=430)
+[16:11:44]   [sim_time] /panther2/imu/data ...
+[16:11:54]     avg=83.333 Hz | min=0.008s max=0.016s std=0.00048s (n=421)
+[16:11:54]   [wall_clock] /tf ...
+[16:12:05]     avg=152.136 Hz | min=0.000s max=0.056s std=0.00852s (n=1226)
+[16:12:05]   [wall_clock] /panther2/velodyne_points_filtered ...
+[16:12:15]     avg=2.922 Hz | min=0.316s max=0.367s std=0.01382s (n=23)
+[16:12:15]   [sim_time] /panther2/velodyne_points_filtered ...
+[16:12:25]     avg=5.000 Hz | min=0.196s max=0.204s std=0.00204s (n=23)
+[16:12:25]   [wall_clock] /panther2/scan ...
+[16:12:36]     avg=2.819 Hz | min=0.325s max=0.398s std=0.01933s (n=22)
+[16:12:36]   [sim_time] /panther2/scan ...
+[16:12:46]     avg=4.995 Hz | min=0.192s max=0.208s std=0.00338s (n=21)
+[16:12:46] 
+[16:12:46] === ROBOT: panther3 ===
+[16:12:46]   [wall_clock] /panther3/velodyne_points ...
+[16:12:56]     avg=2.748 Hz | min=0.341s max=0.403s std=0.01325s (n=22)
+[16:12:56]   [sim_time] /panther3/velodyne_points ...
+[16:13:06]     avg=4.991 Hz | min=0.188s max=0.216s std=0.00526s (n=23)
+[16:13:06]   [wall_clock] /panther3/odometry/filtered ...
+[16:13:17]     avg=26.689 Hz | min=0.016s max=0.092s std=0.02081s (n=220)
+[16:13:17]   [sim_time] /panther3/odometry/filtered ...
+[16:13:27]     avg=50.000 Hz | min=0.020s max=0.020s std=0.00000s (n=251)
+[16:13:27]   [wall_clock] /panther3/imu/data ...
+[16:13:37]     avg=43.000 Hz | min=0.009s max=0.078s std=0.01524s (n=350)
+[16:13:37]   [sim_time] /panther3/imu/data ...
+[16:13:48]     avg=83.333 Hz | min=0.008s max=0.016s std=0.00044s (n=337)
+[16:13:48]   [wall_clock] /tf ...
+[16:13:58]     avg=125.292 Hz | min=0.000s max=0.060s std=0.01116s (n=1012)
+[16:13:58]   [wall_clock] /panther3/velodyne_points_filtered ...
+[16:14:08]     avg=2.493 Hz | min=0.374s max=0.442s std=0.01365s (n=19)
+[16:14:08]   [sim_time] /panther3/velodyne_points_filtered ...
+[16:14:18]     avg=4.994 Hz | min=0.192s max=0.208s std=0.00399s (n=17)
+[16:14:18]   [wall_clock] /panther3/scan ...
+[16:14:29]     avg=2.419 Hz | min=0.394s max=0.445s std=0.01537s (n=19)
+[16:14:29]   [sim_time] /panther3/scan ...
+[16:14:39]     avg=5.000 Hz | min=0.196s max=0.204s std=0.00214s (n=21)
+[16:14:39] 
+[16:14:39] --- Measuring point cloud size ---
+[16:14:40]   panther: Could not read pointcloud fields
+[16:14:41]   panther2: Could not read pointcloud fields
+[16:14:42]   panther3: Could not read pointcloud fields
+[16:14:42] 
+[16:14:42] --- Docker container resource usage ---
+NAME                      CPU %     MEM USAGE / LIMIT     PIDS
+panther3_sensor_preproc   4.42%     63.74MiB / 62.54GiB   32
+panther2_sensor_preproc   212.63%   105.2MiB / 62.54GiB   62
+gz_robot_3                36.23%    156MiB / 62.54GiB     141
+gz_robot_2                29.90%    157.8MiB / 62.54GiB   141
+panther_sensor_preproc    9.47%     67.36MiB / 62.54GiB   32
+gazebo                    135.80%   1.396GiB / 62.54GiB   290
+[16:14:46] 
+[16:14:46] --- GPU utilization (nvidia-smi) ---
+utilization.gpu [%], utilization.memory [%], memory.used [MiB], memory.total [MiB], temperature.gpu
+0 %, 0 %, 112 MiB, 24564 MiB, 27
+[16:14:46] 
+[16:14:46] --- SUMMARY ---
+============================================
+BENCHMARK SUMMARY: 3 Robot(s)
+Date: lun 31 ago 2026 16:14:46 CEST
+Duration per measurement: 10s
+============================================
+
+SIM-TIME RATES (must be constant across all configs):
+-----------------------------------------------------
+  panther /panther/velodyne_points: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/odometry/filtered: 50.000 Hz (informational)
+  panther /panther/imu/data: 83.333 Hz (informational)
+  panther /panther/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/scan: 5.000 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/velodyne_points: 4.996 Hz (expected ~5.0) [FAIL]
+  panther2 /panther2/odometry/filtered: 50.000 Hz (informational)
+  panther2 /panther2/imu/data: 83.333 Hz (informational)
+  panther2 /panther2/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/scan: 4.995 Hz (expected ~5.0) [FAIL]
+  panther3 /panther3/velodyne_points: 4.991 Hz (expected ~5.0) [FAIL]
+  panther3 /panther3/odometry/filtered: 50.000 Hz (informational)
+  panther3 /panther3/imu/data: 83.333 Hz (informational)
+  panther3 /panther3/velodyne_points_filtered: 4.994 Hz (expected ~5.0) [FAIL]
+  panther3 /panther3/scan: 5.000 Hz (expected ~5.0) [PASS]
+
+WALL-CLOCK RATES & RTF:
+-----------------------
+  /clock: 217.135 Hz wall-clock
+  panther /panther/velodyne_points: 4.358 Hz wall-clock → RTF ≈ 0,80
+  panther /panther/odometry/filtered: 40.207 Hz wall-clock
+  panther /panther/imu/data: 65.324 Hz wall-clock
+  panther /tf: 189.290 Hz wall-clock
+  panther /panther/velodyne_points_filtered: 3.663 Hz wall-clock → RTF ≈ 0,60
+  panther /panther/scan: 3.485 Hz wall-clock
+  panther2 /panther2/velodyne_points: 3.376 Hz wall-clock → RTF ≈ 0,60
+  panther2 /panther2/odometry/filtered: 32.573 Hz wall-clock
+  panther2 /panther2/imu/data: 52.924 Hz wall-clock
+  panther2 /tf: 152.136 Hz wall-clock
+  panther2 /panther2/velodyne_points_filtered: 2.922 Hz wall-clock → RTF ≈ 0,40
+  panther2 /panther2/scan: 2.819 Hz wall-clock
+  panther3 /panther3/velodyne_points: 2.748 Hz wall-clock → RTF ≈ 0,40
+  panther3 /panther3/odometry/filtered: 26.689 Hz wall-clock
+  panther3 /panther3/imu/data: 43.000 Hz wall-clock
+  panther3 /tf: 125.292 Hz wall-clock
+  panther3 /panther3/velodyne_points_filtered: 2.493 Hz wall-clock → RTF ≈ 0,40
+  panther3 /panther3/scan: 2.419 Hz wall-clock
+
+VERDICT:
+--------
+  ❌ SOME SIM-TIME RATES ARE OUT OF TOLERANCE
+  → Simulation may be dropping sensor messages.
+  → Controller benchmarks may be affected by sim performance.
+  → Consider further reducing sensor load or physics step size.
+
+FILES:
+  CSV:     ./results/benchmark_3_robots_20260831_160848.csv
+  Log:     ./results/benchmark_3_robots_20260831_160848.log
+  Summary: ./results/benchmark_3_robots_20260831_160848_summary.txt
+============================================
+[16:14:46] 
+[16:14:46] Benchmark complete. Results in ./results/

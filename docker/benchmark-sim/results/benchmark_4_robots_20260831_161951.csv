@@ -1,0 +1,69 @@
+num_robots,robot,topic,clock_mode,avg_rate_hz,min_interval_s,max_interval_s,std_dev_s,window
+4,global,/clock,wall_clock,185.728,0.000,0.036,0.00360,1492
+4,panther,/panther/velodyne_points,wall_clock,3.578,0.246,0.347,0.02682,29
+4,panther,/panther/velodyne_points,sim_time,5.000,0.196,0.204,0.00200,32
+4,panther,/panther/odometry/filtered,wall_clock,34.452,0.015,0.067,0.00866,282
+4,panther,/panther/odometry/filtered,sim_time,50.000,0.016,0.024,0.00195,302
+4,panther,/panther/imu/data,wall_clock,54.680,0.006,0.047,0.00939,442
+4,panther,/panther/imu/data,sim_time,83.333,0.004,0.020,0.00087,505
+4,panther,/tf,wall_clock,208.792,0.000,0.041,0.00691,1685
+4,panther,/panther/velodyne_points_filtered,wall_clock,3.121,0.298,0.345,0.01500,25
+4,panther,/panther/velodyne_points_filtered,sim_time,5.000,0.196,0.204,0.00157,26
+4,panther,/panther/scan,wall_clock,2.869,0.318,0.392,0.01763,25
+4,panther,/panther/scan,sim_time,5.000,0.196,0.204,0.00192,26
+4,panther2,/panther2/velodyne_points,wall_clock,2.853,0.322,0.400,0.01695,25
+4,panther2,/panther2/velodyne_points,sim_time,4.991,0.192,0.212,0.00407,23
+4,panther2,/panther2/odometry/filtered,wall_clock,27.396,0.019,0.075,0.01464,226
+4,panther2,/panther2/odometry/filtered,sim_time,50.000,0.016,0.024,0.00155,252
+4,panther2,/panther2/imu/data,wall_clock,44.295,0.009,0.074,0.01434,361
+4,panther2,/panther2/imu/data,sim_time,83.333,0.008,0.016,0.00062,337
+4,panther2,/tf,wall_clock,168.505,0.000,0.053,0.00978,1355
+4,panther2,/panther2/velodyne_points_filtered,wall_clock,2.515,0.372,0.420,0.01436,19
+4,panther2,/panther2/velodyne_points_filtered,sim_time,5.000,0.196,0.204,0.00123,21
+4,panther2,/panther2/scan,wall_clock,2.380,0.391,0.458,0.01755,19
+4,panther2,/panther2/scan,sim_time,5.018,0.192,0.208,0.00439,17
+4,panther3,/panther3/velodyne_points,wall_clock,2.372,0.397,0.479,0.01815,19
+4,panther3,/panther3/velodyne_points,sim_time,4.994,0.196,0.208,0.00290,17
+4,panther3,/panther3/odometry/filtered,wall_clock,22.918,0.019,0.095,0.01412,189
+4,panther3,/panther3/odometry/filtered,sim_time,50.000,0.016,0.024,0.00080,201
+4,panther3,/panther3/imu/data,wall_clock,37.275,0.005,0.076,0.01909,304
+4,panther3,/panther3/imu/data,sim_time,83.333,0.008,0.016,0.00062,337
+4,panther3,/tf,wall_clock,145.419,0.000,0.076,0.01171,1183
+4,panther3,/panther3/velodyne_points_filtered,wall_clock,2.141,0.432,0.506,0.01796,16
+4,panther3,/panther3/velodyne_points_filtered,sim_time,4.981,0.196,0.216,0.00474,16
+4,panther3,/panther3/scan,wall_clock,2.090,0.446,0.512,0.01828,16
+4,panther3,/panther3/scan,sim_time,5.000,0.196,0.204,0.00316,16
+4,panther4,/panther4/velodyne_points,wall_clock,2.017,0.463,0.540,0.02237,16
+4,panther4,/panther4/velodyne_points,sim_time,5.006,0.196,0.208,0.00339,18
+4,panther4,/panther4/odometry/filtered,wall_clock,19.702,0.019,0.109,0.02390,163
+4,panther4,/panther4/odometry/filtered,sim_time,50.000,0.016,0.024,0.00065,151
+4,panther4,/panther4/imu/data,wall_clock,32.420,0.009,0.115,0.02435,265
+4,panther4,/panther4/imu/data,sim_time,83.333,0.008,0.016,0.00080,253
+4,panther4,/tf,wall_clock,127.612,0.000,0.086,0.01447,1039
+4,panther4,/panther4/velodyne_points_filtered,wall_clock,1.878,0.501,0.569,0.01845,15
+4,panther4,/panther4/velodyne_points_filtered,sim_time,5.018,0.180,0.208,0.00815,11
+4,panther4,/panther4/scan,wall_clock,1.845,0.516,0.594,0.02415,15
+4,panther4,/panther4/scan,sim_time,4.967,0.192,0.220,0.00789,12
+4,panther,pointcloud_width,,N/A,,,,
+4,panther,pointcloud_height,,N/A,,,,
+4,panther2,pointcloud_width,,N/A,,,,
+4,panther2,pointcloud_height,,N/A,,,,
+4,panther3,pointcloud_width,,N/A,,,,
+4,panther3,pointcloud_height,,N/A,,,,
+4,panther4,pointcloud_width,,N/A,,,,
+4,panther4,pointcloud_height,,N/A,,,,
+
+# --- Docker Stats ---
+container,cpu_percent,mem_usage,pids
+panther4_sensor_preproc,3.98%,67.79MiB / 62.54GiB,32
+gz_robot_4,28.20%,173.1MiB / 62.54GiB,141
+panther3_sensor_preproc,4.14%,69.43MiB / 62.54GiB,32
+gz_robot_3,88.98%,215.2MiB / 62.54GiB,156
+panther2_sensor_preproc,188.96%,110MiB / 62.54GiB,62
+panther_sensor_preproc,11.22%,71.45MiB / 62.54GiB,32
+gz_robot_2,32.83%,174.2MiB / 62.54GiB,141
+gazebo,140.76%,1.986GiB / 62.54GiB,320
+
+# --- GPU Stats ---
+utilization.gpu [%], utilization.memory [%], memory.used [MiB], memory.total [MiB], temperature.gpu
+5 %, 0 %, 113 MiB, 24564 MiB, 27

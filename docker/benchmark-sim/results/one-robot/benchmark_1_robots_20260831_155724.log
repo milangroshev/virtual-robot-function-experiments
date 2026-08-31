@@ -1,0 +1,96 @@
+[15:57:24] ==========================================
+[15:57:24] BENCHMARK: 1 robot(s), 10s sample
+[15:57:24] ==========================================
+[15:57:24] --- Pre-flight: checking container health ---
+[15:57:25]   gazebo: healthy
+[15:57:25]   panther_sensor_preproc: healthy
+[15:57:25] 
+[15:57:25] --- Verifying Gazebo overrides ---
+[15:57:27]   LiDAR update_rate: 5.0 Hz (expected: 5.0)
+[15:57:27]   Horizontal samples: 450 (expected: 450)
+[15:57:27]   Vertical samples:   8 (expected: 8)
+[15:57:27]   Max range:           30.0 m (expected: 30.0)
+[15:57:27]   Physics step size:   0.004 s (expected: 0.004)
+[15:57:27]   ✅ All overrides verified
+[15:57:27] 
+[15:57:27] --- Measuring topic rates (10s per topic) ---
+[15:57:27] 
+[15:57:27] === GLOBAL TOPICS ===
+[15:57:27]   [wall_clock] /clock ...
+[15:57:37]     avg=202.735 Hz | min=0.002s max=0.039s std=0.00443s (n=1633)
+[15:57:37] 
+[15:57:37] === ROBOT: panther ===
+[15:57:37]   [wall_clock] /panther/velodyne_points ...
+[15:57:47]     avg=4.027 Hz | min=0.230s max=0.270s std=0.00691s (n=33)
+[15:57:47]   [sim_time] /panther/velodyne_points ...
+[15:57:58]     avg=5.000 Hz | min=0.196s max=0.204s std=0.00133s (n=36)
+[15:57:58]   [wall_clock] /panther/odometry/filtered ...
+[15:58:09]     avg=39.646 Hz | min=0.019s max=0.053s std=0.01000s (n=323)
+[15:58:09]   [sim_time] /panther/odometry/filtered ...
+[15:58:19]     avg=50.000 Hz | min=0.020s max=0.020s std=0.00000s (n=351)
+[15:58:20]   [wall_clock] /panther/imu/data ...
+[15:58:30]     avg=65.158 Hz | min=0.008s max=0.048s std=0.00947s (n=526)
+[15:58:30]   [sim_time] /panther/imu/data ...
+[15:58:41]     avg=83.333 Hz | min=0.008s max=0.016s std=0.00023s (n=589)
+[15:58:41]   [wall_clock] /tf ...
+[15:58:51]     avg=64.177 Hz | min=0.000s max=0.057s std=0.01487s (n=529)
+[15:58:51]   [wall_clock] /panther/velodyne_points_filtered ...
+[15:59:02]     avg=3.824 Hz | min=0.244s max=0.278s std=0.00750s (n=33)
+[15:59:02]   [sim_time] /panther/velodyne_points_filtered ...
+[15:59:13]     avg=5.000 Hz | min=0.196s max=0.204s std=0.00297s (n=29)
+[15:59:13]   [wall_clock] /panther/scan ...
+[15:59:23]     avg=3.760 Hz | min=0.247s max=0.277s std=0.00720s (n=29)
+[15:59:23]   [sim_time] /panther/scan ...
+[15:59:33]     avg=4.996 Hz | min=0.196s max=0.204s std=0.00292s (n=28)
+[15:59:34] 
+[15:59:34] --- Measuring point cloud size ---
+[15:59:35]   panther: Could not read pointcloud fields
+[15:59:35] 
+[15:59:35] --- Docker container resource usage ---
+NAME                     CPU %     MEM USAGE / LIMIT     PIDS
+panther_sensor_preproc   21.86%    93.41MiB / 62.54GiB   61
+gazebo                   122.37%   777.4MiB / 62.54GiB   230
+[15:59:40] 
+[15:59:40] --- GPU utilization (nvidia-smi) ---
+utilization.gpu [%], utilization.memory [%], memory.used [MiB], memory.total [MiB], temperature.gpu
+0 %, 0 %, 110 MiB, 24564 MiB, 27
+[15:59:40] 
+[15:59:40] --- SUMMARY ---
+============================================
+BENCHMARK SUMMARY: 1 Robot(s)
+Date: lun 31 ago 2026 15:59:40 CEST
+Duration per measurement: 10s
+============================================
+
+SIM-TIME RATES (must be constant across all configs):
+-----------------------------------------------------
+  panther /panther/velodyne_points: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/odometry/filtered: 50.000 Hz (informational)
+  panther /panther/imu/data: 83.333 Hz (informational)
+  panther /panther/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/scan: 4.996 Hz (expected ~5.0) [FAIL]
+
+WALL-CLOCK RATES & RTF:
+-----------------------
+  /clock: 202.735 Hz wall-clock
+  panther /panther/velodyne_points: 4.027 Hz wall-clock → RTF ≈ 0,80
+  panther /panther/odometry/filtered: 39.646 Hz wall-clock
+  panther /panther/imu/data: 65.158 Hz wall-clock
+  panther /tf: 64.177 Hz wall-clock
+  panther /panther/velodyne_points_filtered: 3.824 Hz wall-clock → RTF ≈ 0,60
+  panther /panther/scan: 3.760 Hz wall-clock
+
+VERDICT:
+--------
+  ❌ SOME SIM-TIME RATES ARE OUT OF TOLERANCE
+  → Simulation may be dropping sensor messages.
+  → Controller benchmarks may be affected by sim performance.
+  → Consider further reducing sensor load or physics step size.
+
+FILES:
+  CSV:     ./results/benchmark_1_robots_20260831_155724.csv
+  Log:     ./results/benchmark_1_robots_20260831_155724.log
+  Summary: ./results/benchmark_1_robots_20260831_155724_summary.txt
+============================================
+[15:59:40] 
+[15:59:40] Benchmark complete. Results in ./results/

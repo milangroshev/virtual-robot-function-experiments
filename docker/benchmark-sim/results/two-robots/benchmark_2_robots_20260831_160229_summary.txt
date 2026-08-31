@@ -1,0 +1,48 @@
+============================================
+BENCHMARK SUMMARY: 2 Robot(s)
+Date: lun 31 ago 2026 16:06:35 CEST
+Duration per measurement: 10s
+============================================
+
+SIM-TIME RATES (must be constant across all configs):
+-----------------------------------------------------
+  panther /panther/velodyne_points: 5.003 Hz (expected ~5.0) [PASS]
+  panther /panther/odometry/filtered: 50.000 Hz (informational)
+  panther /panther/imu/data: 83.333 Hz (informational)
+  panther /panther/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/scan: 5.000 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/velodyne_points: 5.003 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/odometry/filtered: 50.000 Hz (informational)
+  panther2 /panther2/imu/data: 83.333 Hz (informational)
+  panther2 /panther2/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/scan: 5.000 Hz (expected ~5.0) [PASS]
+
+WALL-CLOCK RATES & RTF:
+-----------------------
+  /clock: 222.345 Hz wall-clock
+  panther /panther/velodyne_points: 4.332 Hz wall-clock → RTF ≈ 0,80
+  panther /panther/odometry/filtered: 42.793 Hz wall-clock
+  panther /panther/imu/data: 70.121 Hz wall-clock
+  panther /tf: 138.724 Hz wall-clock
+  panther /panther/velodyne_points_filtered: 4.101 Hz wall-clock → RTF ≈ 0,80
+  panther /panther/scan: 4.061 Hz wall-clock
+  panther2 /panther2/velodyne_points: 3.937 Hz wall-clock → RTF ≈ 0,60
+  panther2 /panther2/odometry/filtered: 39.035 Hz wall-clock
+  panther2 /panther2/imu/data: 63.962 Hz wall-clock
+  panther2 /tf: 125.773 Hz wall-clock
+  panther2 /panther2/velodyne_points_filtered: 3.744 Hz wall-clock → RTF ≈ 0,60
+  panther2 /panther2/scan: 3.648 Hz wall-clock
+
+VERDICT:
+--------
+  ✅ ALL SIM-TIME RATES ARE WITHIN TOLERANCE
+  → Simulation is reliable for controller benchmarking.
+  → Controllers using use_sim_time will experience identical
+    physics and sensor rates regardless of fleet size.
+  → Only wall-clock experiment duration varies.
+
+FILES:
+  CSV:     ./results/benchmark_2_robots_20260831_160229.csv
+  Log:     ./results/benchmark_2_robots_20260831_160229.log
+  Summary: ./results/benchmark_2_robots_20260831_160229_summary.txt
+============================================

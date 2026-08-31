@@ -1,0 +1,69 @@
+============================================
+BENCHMARK SUMMARY: 4 Robot(s)
+Date: lun 31 ago 2026 16:27:44 CEST
+Duration per measurement: 10s
+============================================
+
+SIM-TIME RATES (must be constant across all configs):
+-----------------------------------------------------
+  panther /panther/velodyne_points: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/odometry/filtered: 50.000 Hz (informational)
+  panther /panther/imu/data: 83.333 Hz (informational)
+  panther /panther/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/scan: 5.000 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/velodyne_points: 4.991 Hz (expected ~5.0) [FAIL]
+  panther2 /panther2/odometry/filtered: 50.000 Hz (informational)
+  panther2 /panther2/imu/data: 83.333 Hz (informational)
+  panther2 /panther2/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther2 /panther2/scan: 5.018 Hz (expected ~5.0) [PASS]
+  panther3 /panther3/velodyne_points: 4.994 Hz (expected ~5.0) [FAIL]
+  panther3 /panther3/odometry/filtered: 50.000 Hz (informational)
+  panther3 /panther3/imu/data: 83.333 Hz (informational)
+  panther3 /panther3/velodyne_points_filtered: 4.981 Hz (expected ~5.0) [FAIL]
+  panther3 /panther3/scan: 5.000 Hz (expected ~5.0) [PASS]
+  panther4 /panther4/velodyne_points: 5.006 Hz (expected ~5.0) [PASS]
+  panther4 /panther4/odometry/filtered: 50.000 Hz (informational)
+  panther4 /panther4/imu/data: 83.333 Hz (informational)
+  panther4 /panther4/velodyne_points_filtered: 5.018 Hz (expected ~5.0) [PASS]
+  panther4 /panther4/scan: 4.967 Hz (expected ~5.0) [FAIL]
+
+WALL-CLOCK RATES & RTF:
+-----------------------
+  /clock: 185.728 Hz wall-clock
+  panther /panther/velodyne_points: 3.578 Hz wall-clock → RTF ≈ 0,60
+  panther /panther/odometry/filtered: 34.452 Hz wall-clock
+  panther /panther/imu/data: 54.680 Hz wall-clock
+  panther /tf: 208.792 Hz wall-clock
+  panther /panther/velodyne_points_filtered: 3.121 Hz wall-clock → RTF ≈ 0,60
+  panther /panther/scan: 2.869 Hz wall-clock
+  panther2 /panther2/velodyne_points: 2.853 Hz wall-clock → RTF ≈ 0,40
+  panther2 /panther2/odometry/filtered: 27.396 Hz wall-clock
+  panther2 /panther2/imu/data: 44.295 Hz wall-clock
+  panther2 /tf: 168.505 Hz wall-clock
+  panther2 /panther2/velodyne_points_filtered: 2.515 Hz wall-clock → RTF ≈ 0,40
+  panther2 /panther2/scan: 2.380 Hz wall-clock
+  panther3 /panther3/velodyne_points: 2.372 Hz wall-clock → RTF ≈ 0,40
+  panther3 /panther3/odometry/filtered: 22.918 Hz wall-clock
+  panther3 /panther3/imu/data: 37.275 Hz wall-clock
+  panther3 /tf: 145.419 Hz wall-clock
+  panther3 /panther3/velodyne_points_filtered: 2.141 Hz wall-clock → RTF ≈ 0,40
+  panther3 /panther3/scan: 2.090 Hz wall-clock
+  panther4 /panther4/velodyne_points: 2.017 Hz wall-clock → RTF ≈ 0,40
+  panther4 /panther4/odometry/filtered: 19.702 Hz wall-clock
+  panther4 /panther4/imu/data: 32.420 Hz wall-clock
+  panther4 /tf: 127.612 Hz wall-clock
+  panther4 /panther4/velodyne_points_filtered: 1.878 Hz wall-clock → RTF ≈ 0,20
+  panther4 /panther4/scan: 1.845 Hz wall-clock
+
+VERDICT:
+--------
+  ❌ SOME SIM-TIME RATES ARE OUT OF TOLERANCE
+  → Simulation may be dropping sensor messages.
+  → Controller benchmarks may be affected by sim performance.
+  → Consider further reducing sensor load or physics step size.
+
+FILES:
+  CSV:     ./results/benchmark_4_robots_20260831_161951.csv
+  Log:     ./results/benchmark_4_robots_20260831_161951.log
+  Summary: ./results/benchmark_4_robots_20260831_161951_summary.txt
+============================================

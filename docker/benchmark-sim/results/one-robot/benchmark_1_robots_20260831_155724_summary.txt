@@ -1,0 +1,36 @@
+============================================
+BENCHMARK SUMMARY: 1 Robot(s)
+Date: lun 31 ago 2026 15:59:40 CEST
+Duration per measurement: 10s
+============================================
+
+SIM-TIME RATES (must be constant across all configs):
+-----------------------------------------------------
+  panther /panther/velodyne_points: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/odometry/filtered: 50.000 Hz (informational)
+  panther /panther/imu/data: 83.333 Hz (informational)
+  panther /panther/velodyne_points_filtered: 5.000 Hz (expected ~5.0) [PASS]
+  panther /panther/scan: 4.996 Hz (expected ~5.0) [FAIL]
+
+WALL-CLOCK RATES & RTF:
+-----------------------
+  /clock: 202.735 Hz wall-clock
+  panther /panther/velodyne_points: 4.027 Hz wall-clock → RTF ≈ 0,80
+  panther /panther/odometry/filtered: 39.646 Hz wall-clock
+  panther /panther/imu/data: 65.158 Hz wall-clock
+  panther /tf: 64.177 Hz wall-clock
+  panther /panther/velodyne_points_filtered: 3.824 Hz wall-clock → RTF ≈ 0,60
+  panther /panther/scan: 3.760 Hz wall-clock
+
+VERDICT:
+--------
+  ❌ SOME SIM-TIME RATES ARE OUT OF TOLERANCE
+  → Simulation may be dropping sensor messages.
+  → Controller benchmarks may be affected by sim performance.
+  → Consider further reducing sensor load or physics step size.
+
+FILES:
+  CSV:     ./results/benchmark_1_robots_20260831_155724.csv
+  Log:     ./results/benchmark_1_robots_20260831_155724.log
+  Summary: ./results/benchmark_1_robots_20260831_155724_summary.txt
+============================================

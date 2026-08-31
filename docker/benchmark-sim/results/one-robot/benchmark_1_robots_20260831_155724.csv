@@ -1,0 +1,24 @@
+num_robots,robot,topic,clock_mode,avg_rate_hz,min_interval_s,max_interval_s,std_dev_s,window
+1,global,/clock,wall_clock,202.735,0.002,0.039,0.00443,1633
+1,panther,/panther/velodyne_points,wall_clock,4.027,0.230,0.270,0.00691,33
+1,panther,/panther/velodyne_points,sim_time,5.000,0.196,0.204,0.00133,36
+1,panther,/panther/odometry/filtered,wall_clock,39.646,0.019,0.053,0.01000,323
+1,panther,/panther/odometry/filtered,sim_time,50.000,0.020,0.020,0.00000,351
+1,panther,/panther/imu/data,wall_clock,65.158,0.008,0.048,0.00947,526
+1,panther,/panther/imu/data,sim_time,83.333,0.008,0.016,0.00023,589
+1,panther,/tf,wall_clock,64.177,0.000,0.057,0.01487,529
+1,panther,/panther/velodyne_points_filtered,wall_clock,3.824,0.244,0.278,0.00750,33
+1,panther,/panther/velodyne_points_filtered,sim_time,5.000,0.196,0.204,0.00297,29
+1,panther,/panther/scan,wall_clock,3.760,0.247,0.277,0.00720,29
+1,panther,/panther/scan,sim_time,4.996,0.196,0.204,0.00292,28
+1,panther,pointcloud_width,,N/A,,,,
+1,panther,pointcloud_height,,N/A,,,,
+
+# --- Docker Stats ---
+container,cpu_percent,mem_usage,pids
+panther_sensor_preproc,4.72%,55.36MiB / 62.54GiB,33
+gazebo,143.76%,779.9MiB / 62.54GiB,230
+
+# --- GPU Stats ---
+utilization.gpu [%], utilization.memory [%], memory.used [MiB], memory.total [MiB], temperature.gpu
+0 %, 0 %, 110 MiB, 24564 MiB, 27
