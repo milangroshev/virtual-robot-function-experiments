@@ -5,14 +5,8 @@ collect_ros2_metrics.py — ROS2 Application & QoS Metrics Collector
 Passively monitors Nav2 topics to collect application-level and QoS metrics
 for resource-contention (noisy-neighbor) profiling experiments.
 
-Tracks BOTH wall-clock and sim-time rates for all topics.
-Sim-time rate is the critical "throughput" metric — it shows whether the
-controller is meeting its 10 Hz deadline in simulation time, independent
-of the Gazebo real-time factor.
-
 Outputs:
   ros2_rates.csv  — 1 Hz time-series of topic frequencies and jitter
-                     (both wall-clock and sim-time columns)
   ros2_goals.csv  — per-navigation-goal event log (duration, status, recoveries)
 
 Usage:
@@ -75,16 +69,15 @@ _STATUS_NAMES = {
 
 # ---------------------------------------------------------------------------
 # Topics to track for frequency measurement
-# Each entry: label -> (message_type, topic_pattern, qos_key, has_header)
-#   qos_key selects which QoS profile to use
-#   has_header indicates if we can extract sim-time from msg.header.stamp
+# Each entry: label -> (message_type, topic_pattern with {ns} placeholder, qos_key)
+#   qos_key selects which QoS profile to use (defined in __init__)
 # ---------------------------------------------------------------------------
 _RATE_TOPICS = {
-    "cmd_vel_nav":       (TwistStamped,              "/{ns}/cmd_vel_nav",              "sensor",  True),
-    "amcl_pose":         (PoseWithCovarianceStamped, "/{ns}/amcl_pose",                "sensor",  True),
-    "plan":              (Path,                      "/{ns}/plan",                     "sensor",  True),
-    "local_costmap":     (OccupancyGrid,             "/{ns}/local_costmap/costmap",    "costmap", True),
-    "velodyne_filtered": (PointCloud2,               "/{ns}/velodyne_points_filtered", "sensor",  True),
+    "cmd_vel_nav":       (TwistStamped,                "/{ns}/cmd_vel_nav",                "sensor"),
+    "amcl_pose":         (PoseWithCovarianceStamped,   "/{ns}/amcl_pose",                  "sensor"),
+    "plan":              (Path,                        "/{ns}/plan",                       "sensor"),
+    "local_costmap":     (OccupancyGrid,               "/{ns}/local_costmap/costmap",      "costmap"),
+    "velodyne_filtered": (PointCloud2,                 "/{ns}/velodyne_points_filtered",   "sensor"),
 }
 
 # Recovery behavior action names to monitor
@@ -109,20 +102,16 @@ class MetricsCollector(Node):
 
         self._lock = threading.Lock()
 
-        # ── Rate tracking (wall-clock) ────────────────────────────────
+        # ── Rate tracking ─────────────────────────────────────────────
         # key = "ns/label" -> list of monotonic timestamps (pruned each tick)
         self._msg_stamps: dict[str, list[float]] = defaultdict(list)
-
-        # ── Rate tracking (sim-time from message headers) ─────────────
-        # key = "ns/label" -> list of sim-time seconds (pruned each tick)
-        self._msg_sim_stamps: dict[str, list[float]] = defaultdict(list)
 
         # ── Plan path length ──────────────────────────────────────────
         self._last_path_length: dict[str, float] = {}  # ns -> metres
 
         # ── Navigation goal lifecycle ─────────────────────────────────
         self._goal_states: dict[tuple, int] = {}       # (ns, uuid) -> last status
-        self._goal_starts: dict[tuple, tuple] = {}     # (ns, uuid) -> (mono_t, wall_t, sim_t)
+        self._goal_starts: dict[tuple, tuple] = {}     # (ns, uuid) -> (mono_t, wall_t)
         self._goal_log: list[dict] = []
 
         # ── Recovery tracking ─────────────────────────────────────────
@@ -133,10 +122,10 @@ class MetricsCollector(Node):
         )
 
         # ── Diagnostics ──────────────────────────────────────────────
-        self._nav_status_cb_count = 0
-        self._goals_started = 0
-        self._goals_completed = 0
-        self._goals_skipped_historical = 0
+        self._nav_status_cb_count = 0     # how many times callback fired
+        self._goals_started = 0           # goals we recorded a start for
+        self._goals_completed = 0         # goals we logged as complete
+        self._goals_skipped_historical = 0  # goals seen first as terminal
 
         # ── QoS profiles ─────────────────────────────────────────────
         qos_profiles = {
@@ -160,12 +149,12 @@ class MetricsCollector(Node):
 
         # ── Create subscriptions for each namespace ───────────────────
         for ns in namespaces:
-            for label, (msg_type, pattern, qos_key, has_header) in _RATE_TOPICS.items():
+            for label, (msg_type, pattern, qos_key) in _RATE_TOPICS.items():
                 topic = pattern.replace("{ns}", ns)
                 self.create_subscription(
                     msg_type,
                     topic,
-                    self._make_rate_cb(ns, label, msg_type, has_header),
+                    self._make_rate_cb(ns, label, msg_type),
                     qos_profiles[qos_key],
                 )
 
@@ -203,65 +192,22 @@ class MetricsCollector(Node):
         )
 
     # =====================================================================
-    # Helper: extract sim-time from message header
-    # =====================================================================
-
-    @staticmethod
-    def _stamp_to_sec(header) -> float:
-        """Convert a ROS2 header.stamp to float seconds."""
-        return header.stamp.sec + header.stamp.nanosec * 1e-9
-
-    # =====================================================================
     # Subscription callbacks
     # =====================================================================
 
-    def _make_rate_cb(self, ns: str, label: str, msg_type, has_header: bool):
-        """Return a closure that records both wall-clock and sim-time timestamps."""
+    def _make_rate_cb(self, ns: str, label: str, msg_type):
+        """Return a closure that records message timestamps (and path length for plans)."""
         key = f"{ns}/{label}"
-
         if msg_type is Path:
-            # Path: has header + also compute path length
             def cb(msg):
-                now_mono = time.monotonic()
-                sim_t = self._stamp_to_sec(msg.header) if has_header else 0.0
                 with self._lock:
-                    self._msg_stamps[key].append(now_mono)
-                    if has_header and sim_t > 0.0:
-                        self._msg_sim_stamps[key].append(sim_t)
+                    self._msg_stamps[key].append(time.monotonic())
                     self._last_path_length[ns] = self._path_length(msg.poses)
             return cb
-
-        elif msg_type is OccupancyGrid:
-            # OccupancyGrid: header is in msg.header
-            def cb(msg):
-                now_mono = time.monotonic()
-                sim_t = self._stamp_to_sec(msg.header) if has_header else 0.0
-                with self._lock:
-                    self._msg_stamps[key].append(now_mono)
-                    if has_header and sim_t > 0.0:
-                        self._msg_sim_stamps[key].append(sim_t)
-            return cb
-
-        elif msg_type is PoseWithCovarianceStamped:
-            # PoseWithCovarianceStamped: header is in msg.header
-            def cb(msg):
-                now_mono = time.monotonic()
-                sim_t = self._stamp_to_sec(msg.header) if has_header else 0.0
-                with self._lock:
-                    self._msg_stamps[key].append(now_mono)
-                    if has_header and sim_t > 0.0:
-                        self._msg_sim_stamps[key].append(sim_t)
-            return cb
-
         else:
-            # TwistStamped, PointCloud2, etc. — all have msg.header.stamp
             def cb(msg):
-                now_mono = time.monotonic()
-                sim_t = self._stamp_to_sec(msg.header) if has_header else 0.0
                 with self._lock:
-                    self._msg_stamps[key].append(now_mono)
-                    if has_header and sim_t > 0.0:
-                        self._msg_sim_stamps[key].append(sim_t)
+                    self._msg_stamps[key].append(time.monotonic())
             return cb
 
     def _on_nav_status(self, msg, ns: str):
@@ -269,9 +215,6 @@ class MetricsCollector(Node):
         try:
             now_mono = time.monotonic()
             now_wall = time.time()
-
-            # Get current sim-time from the node's clock
-            now_sim = self.get_clock().now().nanoseconds * 1e-9
 
             with self._lock:
                 self._nav_status_cb_count += 1
@@ -283,14 +226,17 @@ class MetricsCollector(Node):
                     curr = s.status
 
                     if prev == curr:
+                        # No state change — skip (most common path)
                         continue
 
                     # ── First time seeing this goal ──────────────────
                     if prev is None:
                         if curr in _TERMINAL:
+                            # Goal completed before we started — skip
                             self._goals_skipped_historical += 1
                         else:
-                            self._goal_starts[gkey] = (now_mono, now_wall, now_sim)
+                            # Goal is in progress — record start
+                            self._goal_starts[gkey] = (now_mono, now_wall)
                             self._goals_started += 1
                             self.get_logger().info(
                                 f"[{ns}] Goal started: "
@@ -303,16 +249,17 @@ class MetricsCollector(Node):
                     self._goal_states[gkey] = curr
 
                     if curr not in _TERMINAL:
+                        # Non-terminal transition (e.g. ACCEPTED → EXECUTING)
                         continue
 
                     # ── Goal reached terminal state ──────────────────
                     start_info = self._goal_starts.get(gkey)
                     if start_info is None:
+                        # No start recorded (historical goal re-published)
                         continue
 
-                    mono_start, wall_start, sim_start = start_info
-                    duration_wall = now_mono - mono_start
-                    duration_sim = now_sim - sim_start
+                    mono_start, wall_start = start_info
+                    duration = now_mono - mono_start
                     path_len = self._last_path_length.get(ns, 0.0)
 
                     # Collect recovery counts for this namespace
@@ -326,8 +273,7 @@ class MetricsCollector(Node):
                         "wall_time": now_wall,
                         "namespace": ns,
                         "status": _STATUS_NAMES.get(curr, str(curr)),
-                        "duration_wall_s": round(duration_wall, 3),
-                        "duration_sim_s": round(duration_sim, 3),
+                        "duration_s": round(duration, 3),
                         "path_length_m": round(path_len, 3),
                         "recoveries_spin": rec_spin,
                         "recoveries_backup": rec_backup,
@@ -339,7 +285,7 @@ class MetricsCollector(Node):
 
                     self.get_logger().info(
                         f"[{ns}] Goal {_STATUS_NAMES.get(curr, curr)} "
-                        f"in {duration_wall:.1f}s wall / {duration_sim:.1f}s sim "
+                        f"in {duration:.1f}s "
                         f"(recoveries: spin={rec_spin} backup={rec_backup} "
                         f"wait={rec_wait} drive={rec_drive})"
                     )
@@ -365,6 +311,7 @@ class MetricsCollector(Node):
                     rkey = (ns, behavior, uid)
                     if rkey in self._seen_recovery_ids:
                         continue
+                    # Count when first seen as EXECUTING or terminal
                     if s.status >= _EXECUTING:
                         self._seen_recovery_ids.add(rkey)
                         self._recovery_accum[ns][behavior] += 1
@@ -391,41 +338,6 @@ class MetricsCollector(Node):
         return length
 
     # =====================================================================
-    # Rate/jitter calculation helpers
-    # =====================================================================
-
-    @staticmethod
-    def _calc_rate_jitter(stamps: list[float], window_sec: float = 2.0):
-        """
-        Calculate Hz and jitter from a list of timestamps.
-        Returns (hz, jitter_ms).
-        Works for both wall-clock (monotonic) and sim-time stamps.
-        """
-        if len(stamps) < 2:
-            return (float(len(stamps)) * 0.5, 0.0)
-
-        # Use only recent stamps within window
-        latest = stamps[-1]
-        cutoff = latest - window_sec
-        recent = [t for t in stamps if t > cutoff]
-
-        if len(recent) < 2:
-            return (float(len(recent)) * 0.5, 0.0)
-
-        span = recent[-1] - recent[0]
-        if span <= 0:
-            return (0.0, 0.0)
-
-        hz = (len(recent) - 1) / span
-        intervals = [recent[i] - recent[i - 1] for i in range(1, len(recent))]
-        mean_iv = sum(intervals) / len(intervals)
-        jitter_ms = (
-            math.sqrt(sum((iv - mean_iv) ** 2 for iv in intervals) / len(intervals))
-            * 1000.0
-        )
-        return (hz, jitter_ms)
-
-    # =====================================================================
     # CSV initialisation
     # =====================================================================
 
@@ -434,13 +346,11 @@ class MetricsCollector(Node):
         self._rate_file = open(rate_path, "w", newline="")
         self._rate_writer = csv.writer(self._rate_file)
 
-        header = ["wall_time", "sim_time", "elapsed_s"]
+        header = ["wall_time", "elapsed_s"]
         for ns in self.namespaces:
             for label in _RATE_TOPICS:
-                header.append(f"{ns}/{label}_hz")           # wall-clock rate
-                header.append(f"{ns}/{label}_jitter_ms")     # wall-clock jitter
-                header.append(f"{ns}/{label}_sim_hz")        # sim-time rate
-                header.append(f"{ns}/{label}_sim_jitter_ms") # sim-time jitter
+                header.append(f"{ns}/{label}_hz")
+                header.append(f"{ns}/{label}_jitter_ms")
             header.append(f"{ns}/path_length_m")
         self._rate_writer.writerow(header)
         self._rate_file.flush()
@@ -451,10 +361,8 @@ class MetricsCollector(Node):
         self._goal_writer = csv.DictWriter(
             self._goal_file,
             fieldnames=[
-                "wall_time", "namespace", "status",
-                "duration_wall_s", "duration_sim_s",
-                "path_length_m",
-                "recoveries_spin", "recoveries_backup",
+                "wall_time", "namespace", "status", "duration_s",
+                "path_length_m", "recoveries_spin", "recoveries_backup",
                 "recoveries_wait", "recoveries_drive_on_heading",
             ],
         )
@@ -471,39 +379,39 @@ class MetricsCollector(Node):
             now = time.monotonic()
             elapsed = now - self.start_time
 
-            # Get current sim-time from the node's clock (use_sim_time=True)
-            now_sim = self.get_clock().now().nanoseconds * 1e-9
-
             with self._lock:
-                row = [
-                    f"{time.time():.3f}",
-                    f"{now_sim:.3f}",
-                    f"{elapsed:.1f}",
-                ]
+                row = [f"{time.time():.3f}", f"{elapsed:.1f}"]
 
                 for ns in self.namespaces:
                     for label in _RATE_TOPICS:
                         key = f"{ns}/{label}"
-
-                        # ── Wall-clock rate ───────────────────────────
                         stamps = self._msg_stamps[key]
-                        # Prune old wall-clock stamps
-                        cutoff = now - 3.0
+
+                        # Prune stamps older than 2 seconds
+                        cutoff = now - 2.0
                         stamps[:] = [t for t in stamps if t > cutoff]
-                        wall_hz, wall_jitter = self._calc_rate_jitter(stamps)
 
-                        # ── Sim-time rate ─────────────────────────────
-                        sim_stamps = self._msg_sim_stamps[key]
-                        # Prune old sim-time stamps (keep last 3s of sim-time)
-                        if sim_stamps:
-                            sim_cutoff = sim_stamps[-1] - 3.0
-                            sim_stamps[:] = [t for t in sim_stamps if t > sim_cutoff]
-                        sim_hz, sim_jitter = self._calc_rate_jitter(sim_stamps)
+                        if len(stamps) >= 2:
+                            window = stamps[-1] - stamps[0]
+                            hz = (len(stamps) - 1) / window if window > 0 else 0.0
+                            intervals = [
+                                stamps[i] - stamps[i - 1]
+                                for i in range(1, len(stamps))
+                            ]
+                            mean_iv = sum(intervals) / len(intervals)
+                            jitter_ms = (
+                                math.sqrt(
+                                    sum((iv - mean_iv) ** 2 for iv in intervals)
+                                    / len(intervals)
+                                )
+                                * 1000.0
+                            )
+                        else:
+                            hz = float(len(stamps)) * 0.5
+                            jitter_ms = 0.0
 
-                        row.append(f"{wall_hz:.2f}")
-                        row.append(f"{wall_jitter:.2f}")
-                        row.append(f"{sim_hz:.2f}")
-                        row.append(f"{sim_jitter:.2f}")
+                        row.append(f"{hz:.1f}")
+                        row.append(f"{jitter_ms:.2f}")
 
                     row.append(
                         f"{self._last_path_length.get(ns, 0.0):.3f}"
@@ -527,7 +435,7 @@ class MetricsCollector(Node):
                 if tick > 0 and tick % 30 == 0:
                     active = len(self._goal_starts)
                     self.get_logger().info(
-                        f"[diag] elapsed={tick}s sim_time={now_sim:.1f}s "
+                        f"[diag] elapsed={tick}s "
                         f"status_cb_calls={self._nav_status_cb_count} "
                         f"goals: started={self._goals_started} "
                         f"completed={self._goals_completed} "
