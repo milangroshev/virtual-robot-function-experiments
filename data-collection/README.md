@@ -87,3 +87,43 @@ Each run writes to `results/<experiment_name>_<YYYYMMDD_HHMMSS>/`:
   - `Power/goal = total_energy / goals_completed`
 - Ctrl+C stops all collectors early; a post-run validation step reports which
   collectors failed or produced empty output.
+
+  # TO DO:
+
+  # Experiment 1 — Pinned: 1 Dedicated CPU per Controller
+
+Each controller gets **exactly 1 CPU core**, no sharing.
+
+| Variant | Controllers | Pinning |
+|---|---|---|
+| 1a | 1 controller | CPU 0 |
+| 1b | 2 controllers | Controller 1 → CPU 0, Controller 2 → CPU 1 |
+| 1c | 3 controllers | Controller 1 → CPU 0, Controller 2 → CPU 1, Controller 3 → CPU 2 |
+| 1d | 4 controllers | Controller 1 → CPU 0, Controller 2 → CPU 1, Controller 3 → CPU 2, Controller 4 → CPU 3 |
+
+
+  ## Experiment 2 — Shared: All Controllers Compete for 2 CPUs
+
+All controllers share the **same 2 cores** (CPU 0 and CPU 1).
+
+| Variant | Controllers | Pinning |
+|---|---|---|
+| 2a | 1 controller | Shared on CPU 0–1 |
+| 2b | 2 controllers | Shared on CPU 0–1 |
+| 2c | 3 controllers | Shared on CPU 0–1 |
+| 2d | 4 controllers | Shared on CPU 0–1 |
+
+Docker compose example:
+```yaml
+controller_panther:
+  cpuset: "0-1"
+controller_panther2:
+  cpuset: "0-1"
+controller_panther3:
+  cpuset: "0-1"
+controller_panther4:
+  cpuset: "0-1"
+```
+
+- [ ] Run each variant (2a–2d), same navigation task, **10× per variant**
+- [ ] Collect all metrics per run
