@@ -42,10 +42,6 @@ services:
   localization:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_localization
-    depends_on:
-      sensor_preproc:
-        condition: service_healthy
-        restart: true
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
