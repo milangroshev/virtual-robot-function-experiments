@@ -8,6 +8,9 @@
 x-common-config:
   &common-config
   env_file: ../.env
+  environment:
+    - GZ_IP=127.0.0.1
+    - IGN_IP=127.0.0.1
 
 x-nav2-common:
   &nav2-common
@@ -52,6 +55,10 @@ services:
       - ../config:/config
       - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
       - shared_tmp:/tmp
+      - ../gazebo_overrides/worlds/husarion_world.sdf:/ros2_ws/src/husarion_gz_worlds/worlds/husarion_world.sdf:ro
+      - ../gazebo_overrides/worlds/husarion_world.sdf:/ros2_ws/install/husarion_gz_worlds/share/husarion_gz_worlds/worlds/husarion_world.sdf:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/src/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/install/husarion_components_description/share/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
     network_mode: "host"
     ipc: host
     healthcheck:
