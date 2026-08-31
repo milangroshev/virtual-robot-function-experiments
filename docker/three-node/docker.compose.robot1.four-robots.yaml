@@ -55,6 +55,10 @@ services:
       - ../config:/config
       - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
       - shared_tmp:/tmp
+      - ../gazebo_overrides/worlds/husarion_world.sdf:/ros2_ws/src/husarion_gz_worlds/worlds/husarion_world.sdf:ro
+      - ../gazebo_overrides/worlds/husarion_world.sdf:/ros2_ws/install/husarion_gz_worlds/share/husarion_gz_worlds/worlds/husarion_world.sdf:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/src/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/install/husarion_components_description/share/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
     network_mode: "host"
     ipc: host
     healthcheck:
@@ -93,6 +97,8 @@ services:
       - ../config:/config
       - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
       - shared_tmp:/tmp
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/src/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/install/husarion_components_description/share/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
     network_mode: "host"
     ipc: host
     depends_on:
@@ -139,6 +145,8 @@ services:
       - ../config:/config
       - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
       - shared_tmp:/tmp
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/src/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/install/husarion_components_description/share/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
     network_mode: "host"
     ipc: host
     depends_on:
@@ -184,6 +192,8 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ../config:/config
       - ./config/cyclonedds-robot.xml:/config/cyclonedds-robot.xml
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/src/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
+      - ../gazebo_overrides/urdf/velodyne_puck.urdf.xacro:/ros2_ws/install/husarion_components_description/share/husarion_components_description/urdf/velodyne_puck.urdf.xacro:ro
       - shared_tmp:/tmp
     network_mode: "host"
     ipc: host
