@@ -65,6 +65,7 @@ services:
   planner:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_planner
+    restart: on-failure
     depends_on:
       localization:
         condition: service_healthy
@@ -90,6 +91,7 @@ services:
   bt_orchestrator:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_bt_orchestrator
+    restart: on-failure
     depends_on:
       planner:
         condition: service_healthy
@@ -142,6 +144,7 @@ services:
   planner_2:
     <<: *nav2-common
     container_name: panther2_planner
+    restart: on-failure
     depends_on:
       localization_2:
         condition: service_healthy
@@ -167,6 +170,7 @@ services:
   bt_orchestrator_2:
     <<: *nav2-common
     container_name: panther2_bt_orchestrator
+    restart: on-failure
     depends_on:
       planner_2:
         condition: service_healthy
@@ -219,6 +223,7 @@ services:
   planner_3:
     <<: *nav2-common
     container_name: panther3_planner
+    restart: on-failure
     depends_on:
       localization_3:
         condition: service_healthy
@@ -244,6 +249,7 @@ services:
   bt_orchestrator_3:
     <<: *nav2-common
     container_name: panther3_bt_orchestrator
+    restart: on-failure
     depends_on:
       planner_3:
         condition: service_healthy
@@ -296,6 +302,7 @@ services:
   planner_4:
     <<: *nav2-common
     container_name: panther4_planner
+    restart: on-failure
     depends_on:
       localization_4:
         condition: service_healthy
@@ -321,6 +328,7 @@ services:
   bt_orchestrator_4:
     <<: *nav2-common
     container_name: panther4_bt_orchestrator
+    restart: on-failure
     depends_on:
       planner_4:
         condition: service_healthy
