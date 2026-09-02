@@ -42,10 +42,6 @@ services:
   localization:
     <<: *nav2-common
     container_name: ${ROBOT_NAMESPACE:-panther}_localization
-    depends_on:
-      sensor_preproc:
-        condition: service_healthy
-        restart: true
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
@@ -204,10 +200,6 @@ services:
   localization_3:
     <<: *nav2-common
     container_name: panther3_localization
-    depends_on:
-      sensor_preproc_3:
-        condition: service_healthy
-        restart: true
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
@@ -282,33 +274,9 @@ services:
   # ROBOT 4 NAV2 STACK (namespace = panther4) — NO GAZEBO, NO CONTROLLER
   # ===========================================================================
 
-  sensor_preproc_4:
-    <<: *nav2-common
-    container_name: panther4_sensor_preproc
-    healthcheck:
-      test: >
-        bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5
-        --field header.frame_id /panther4/velodyne_points_filtered
-        | grep -q velodyne"
-      interval: 4s
-      timeout: 3s
-      retries: 6
-      start_period: 20s
-    command: >
-      ros2 launch husarion_ugv_navigation sensor_preproc_launch.py
-        namespace:=panther4
-        observation_topic:=/panther4/velodyne_points
-        observation_topic_type:=pointcloud
-        use_sim_time:=True
-        robot_model:=${ROBOT_MODEL:-panther}
-
   localization_4:
     <<: *nav2-common
     container_name: panther4_localization
-    depends_on:
-      sensor_preproc_4:
-        condition: service_healthy
-        restart: true
     healthcheck:
       test: >
         bash -c "/ros_entrypoint.sh ros2 topic echo --timeout 0.5

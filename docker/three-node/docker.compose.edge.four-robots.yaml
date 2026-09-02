@@ -49,7 +49,7 @@ services:
   controller:
     <<: *nav2-common
     container_name: panther_controller
-    cpuset: "0-1"
+    cpuset: "0"
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=panther
@@ -65,7 +65,7 @@ services:
   controller_2:
     <<: *nav2-common
     container_name: panther2_controller
-    cpuset: "0-1"
+    cpuset: "1"
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=panther2
@@ -81,7 +81,7 @@ services:
   controller_3:
     <<: *nav2-common
     container_name: panther3_controller
-    cpuset: "0-1"
+    cpuset: "2"
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=panther3
@@ -97,7 +97,7 @@ services:
   controller_4:
     <<: *nav2-common
     container_name: panther4_controller
-    cpuset: "0-1"
+    cpuset: "3"
     command: >
       ros2 launch husarion_ugv_navigation controller_launch.py
         namespace:=panther4

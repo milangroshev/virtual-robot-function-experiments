@@ -1,0 +1,85 @@
+[INFO] [1788356886.943154822] [ros2_metrics_collector]: Subscribed to /panther/navigate_to_pose/_action/status
+[INFO] [1788356886.948724376] [ros2_metrics_collector]: Subscribed to /panther2/navigate_to_pose/_action/status
+[INFO] [1788356886.953865192] [ros2_metrics_collector]: Subscribed to /panther3/navigate_to_pose/_action/status
+[INFO] [1788356886.956601493] [ros2_metrics_collector]: Goal CSV initialised: /output/ros2_goals.csv
+[INFO] [1788356886.957236316] [ros2_metrics_collector]: Collecting metrics for ['panther', 'panther2', 'panther3'] → /output (500s)
+[INFO] [1788356893.262747722] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788356893.285534883] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788356893.356513305] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788356909.748283366] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 16.5s wall / 14.0s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788356909.823235203] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788356910.588102231] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788356917.809474702] [ros2_metrics_collector]: [diag] elapsed=30s sim_time=81.0s status_cb_calls=5 goals: started=4 completed=1 active=3 skipped_historical=0
+[INFO] [1788356922.745224548] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 29.4s wall / 24.7s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788356922.840681209] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788356923.974674808] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788356926.747587318] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 33.5s wall / 27.9s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788356926.770940601] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788356927.715747099] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788356946.866798263] [ros2_metrics_collector]: [diag] elapsed=60s sim_time=104.0s status_cb_calls=9 goals: started=6 completed=3 active=3 skipped_historical=0
+[INFO] [1788356960.488092321] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 50.7s wall / 39.9s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788356960.558446095] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788356961.446184533] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788356976.025579321] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 53.2s wall / 40.4s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788356976.113432248] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788356976.680042870] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788356981.640891267] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 54.9s wall / 41.3s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788356981.718300417] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788356982.345865417] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357007.447718305] [ros2_metrics_collector]: [diag] elapsed=120s sim_time=147.0s status_cb_calls=15 goals: started=9 completed=6 active=3 skipped_historical=0
+[INFO] [1788357020.423470379] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 59.9s wall / 41.1s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357020.505193316] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788357021.295042694] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357037.225710580] [ros2_metrics_collector]: [diag] elapsed=150s sim_time=166.0s status_cb_calls=17 goals: started=10 completed=7 active=3 skipped_historical=0
+[INFO] [1788357038.581233436] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 62.5s wall / 41.3s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357038.680293673] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788357038.856528615] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357054.199775496] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 72.5s wall / 46.7s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357054.238057858] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788357055.367452230] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357067.269065218] [ros2_metrics_collector]: [diag] elapsed=180s sim_time=184.0s status_cb_calls=21 goals: started=12 completed=9 active=3 skipped_historical=0
+[INFO] [1788357090.893266779] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 70.4s wall / 42.0s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357090.953372684] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788357091.800032897] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357097.224634426] [ros2_metrics_collector]: [diag] elapsed=210s sim_time=201.0s status_cb_calls=23 goals: started=13 completed=10 active=3 skipped_historical=0
+[INFO] [1788357100.101651012] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 45.9s wall / 26.3s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357100.131826957] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788357100.895235920] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357123.450911812] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 84.8s wall / 48.1s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357123.526691256] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788357125.302170296] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357127.150226598] [ros2_metrics_collector]: [diag] elapsed=240s sim_time=217.0s status_cb_calls=27 goals: started=15 completed=12 active=3 skipped_historical=0
+[INFO] [1788357157.219033875] [ros2_metrics_collector]: [diag] elapsed=270s sim_time=232.0s status_cb_calls=27 goals: started=15 completed=12 active=3 skipped_historical=0
+[INFO] [1788357177.213281518] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 77.1s wall / 39.1s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357177.283078989] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788357177.902870517] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357179.393359705] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 55.9s wall / 27.6s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357179.421611895] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788357180.166837018] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357185.024248601] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 94.1s wall / 47.7s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357185.104791676] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788357186.547560742] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357216.946430966] [ros2_metrics_collector]: [diag] elapsed=330s sim_time=260.0s status_cb_calls=33 goals: started=18 completed=15 active=3 skipped_historical=0
+[INFO] [1788357249.574835550] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 64.5s wall / 29.0s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357249.652510999] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788357251.173368041] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357266.082934930] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 86.7s wall / 38.7s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357266.153502846] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788357267.705581803] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357268.262663303] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 91.0s wall / 40.5s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357268.283342283] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788357270.137999258] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357277.256176998] [ros2_metrics_collector]: [diag] elapsed=390s sim_time=286.0s status_cb_calls=39 goals: started=21 completed=18 active=3 skipped_historical=0
+[INFO] [1788357344.839148460] [ros2_metrics_collector]: [panther] Goal SUCCEEDED in 95.2s wall / 38.9s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357344.888121377] [ros2_metrics_collector]: [panther] Goal started: status=EXECUTING
+[INFO] [1788357346.735758846] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357365.073931201] [ros2_metrics_collector]: [panther2] Goal SUCCEEDED in 98.9s wall / 39.7s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357365.116491126] [ros2_metrics_collector]: [panther2] Goal started: status=EXECUTING
+[INFO] [1788357367.550989894] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357367.551636944] [ros2_metrics_collector]: [diag] elapsed=480s sim_time=322.0s status_cb_calls=43 goals: started=23 completed=20 active=3 skipped_historical=0
+[INFO] [1788357375.059961343] [ros2_metrics_collector]: [panther3] Goal SUCCEEDED in 106.8s wall / 42.6s sim (recoveries: spin=0 backup=0 wait=0 drive=0)
+[INFO] [1788357375.080847972] [ros2_metrics_collector]: [panther3] Goal started: status=EXECUTING
+[INFO] [1788357375.464473363] [ros2_metrics_collector]: Flushed 1 goal(s) to CSV
+[INFO] [1788357388.899936079] [ros2_metrics_collector]: Duration reached — shutting down
+[INFO] [1788357388.900394089] [ros2_metrics_collector]: Final stats: status_cb_calls=45 goals_started=24 goals_completed=21 goals_skipped_historical=0
+[INFO] [1788357388.900905725] [ros2_metrics_collector]: CSV files closed
